@@ -1,0 +1,41 @@
+[build]
+  publish = "."
+
+# Gamle adresser fra forrige nettside
+[[redirects]]
+  from = "/program/*"
+  to = "/#program"
+  status = 301
+[[redirects]]
+  from = "/program"
+  to = "/#program"
+  status = 301
+[[redirects]]
+  from = "/medvirkende/*"
+  to = "/#medvirkende"
+  status = 301
+[[redirects]]
+  from = "/medvirkende"
+  to = "/#medvirkende"
+  status = 301
+[[redirects]]
+  from = "/aktuelt/*"
+  to = "/#bilder"
+  status = 301
+[[redirects]]
+  from = "/aktuelt"
+  to = "/#bilder"
+  status = 301
+[[redirects]]
+  from = "/om"
+  to = "/#om"
+  status = 301
+[[redirects]]
+  from = "/kontakt"
+  to = "/#kontakt"
+  status = 301
+
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
