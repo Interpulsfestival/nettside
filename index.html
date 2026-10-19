@@ -78,7 +78,7 @@ p{margin:0}
 /* header */
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:20px;height:68px}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex:none}
 .brand img{height:20px;width:auto}
 .theme-btn{font:inherit;font-size:1rem;line-height:1;background:none;border:1px solid var(--line);color:var(--paper);width:36px;height:34px;cursor:pointer;display:grid;place-items:center}
 nav.main{display:flex;gap:4px;margin-left:auto}
@@ -90,7 +90,8 @@ nav.main a[aria-current="page"]{color:var(--accent)}
 .lang button{font:inherit;font-size:.78rem;font-weight:700;letter-spacing:.06em;background:none;border:0;color:var(--dim);padding:.45em .6em;cursor:pointer}
 .lang button[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
 .menu-btn{display:none;font:inherit;font-weight:700;background:none;border:1px solid var(--line);color:var(--paper);padding:.45em .8em;cursor:pointer}
-.top .btn{padding:.55em 1em;font-size:.88rem}
+.top .btn{padding:.55em 1em;font-size:.88rem;white-space:nowrap}
+@media (max-width:1400px){.top .btn{display:none}}
 @media (max-width:1240px){
   nav.main{display:none;position:absolute;left:0;right:0;top:68px;background:var(--ink);flex-direction:column;padding:8px var(--gut-r) 18px var(--gut);border-bottom:1px solid var(--line)}
   nav.main.open{display:flex}
@@ -408,6 +409,35 @@ footer .fine{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-
 .radio{grid-template-columns:repeat(3,1fr)}
 .radio.two{grid-template-columns:repeat(2,1fr)}
 @media (max-width:860px){.radio{grid-template-columns:1fr}}
+.eyebrow.deco{display:flex;align-items:center;gap:14px}
+.eyebrow.deco .dots{gap:5px}.eyebrow.deco .dots i{width:7px;height:7px}
+.mbio{list-style:none;margin:2px 0 0;padding:0;display:grid;gap:3px;font-size:.88rem;color:var(--mist);line-height:1.4}
+.mbio li::before{content:"· ";color:var(--accent);font-weight:900}
+.dir-in{display:grid;grid-template-columns:160px 1fr;gap:24px;align-items:start}
+.dir-in img{width:160px;aspect-ratio:4/5;object-fit:cover;object-position:52% 30%}
+@media (max-width:600px){.dir-in{grid-template-columns:110px 1fr;gap:16px}.dir-in img{width:110px}}
+.lb-open{display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:zoom-in}
+.lb{position:fixed;inset:0;z-index:100;background:rgba(10,10,10,.94);display:grid;grid-template-columns:56px 1fr 56px;align-items:center;padding:24px 8px}
+.lb[hidden]{display:none}
+.lb figure{margin:0;display:grid;justify-items:center;gap:12px;min-width:0}
+.lb img{max-width:100%;max-height:calc(100vh - 110px);object-fit:contain}
+.lb figcaption{color:#cfcfcf;font-size:.88rem;letter-spacing:.02em}
+.lb button{font:inherit;background:none;border:0;color:#fff;cursor:pointer}
+.lb-nav{font-size:2.6rem;line-height:1;height:64px}
+.lb-nav:hover,.lb-x:hover{color:var(--orange)}
+.lb-x{position:absolute;top:10px;right:16px;font-size:2.2rem;line-height:1}
+@media (max-width:600px){.lb{grid-template-columns:36px 1fr 36px;padding:16px 2px}.lb-nav{font-size:2rem}}
+@media (max-width:480px){.brand img{height:15px}.top .wrap{gap:10px}.theme-btn{width:32px}}
+.mbio{margin-top:8px}
+.dotnav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:15;display:grid;gap:12px}
+.dotnav[hidden]{display:none}
+.dotnav button{display:flex;align-items:center;justify-content:flex-end;gap:10px;background:none;border:0;padding:2px;cursor:pointer;font:inherit}
+.dotnav i{width:10px;height:10px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--orange);transition:background .2s,transform .2s}
+.dotnav button.on i{background:var(--orange);transform:scale(1.15)}
+.dotnav button:hover i{background:var(--orange)}
+.dotnav span{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:rgba(24,24,24,.85);padding:.25em .6em;opacity:0;transform:translateX(6px);transition:opacity .15s,transform .15s;pointer-events:none;white-space:nowrap}
+.dotnav button:hover span,.dotnav button:focus-visible span{opacity:1;transform:none}
+@media (max-width:1100px),(hover:none){.dotnav{display:none!important}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -421,11 +451,17 @@ footer .fine{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:space-
       <button id="lang-no" data-lang="no" aria-pressed="true">NO</button>
       <button id="lang-en" data-lang="en" aria-pressed="false">EN</button>
     </div>
-    <a class="btn" href="https://www.ticketmaster.no/" target="_blank" rel="noopener" data-i="tickets">Billetter</a>
+    <a class="btn" id="topBtn" href="http://eepurl.com/hXy6Rn" target="_blank" rel="noopener">Få beskjed ved programslipp!</a>
   </div>
 </header>
 
 <main id="app"></main>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Bilde">
+  <button class="lb-x" data-lbx aria-label="Lukk">×</button>
+  <button class="lb-nav lb-prev" data-lbstep="-1" aria-label="Forrige">‹</button>
+  <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+  <button class="lb-nav lb-next" data-lbstep="1" aria-label="Neste">›</button>
+</div>
 
 <footer>
   <div class="wrap" id="foot"></div>
@@ -675,7 +711,7 @@ const PEOPLE = {
     {n:"Norges musikkhøgskole og Kjell Tore Innervik", img:"", r:{no:"Workers Union",en:"Workers Union"}, p:{no:"Masterstudenter fra NMH og musikere fra Oslo Sinfonietta spilte Andriessens Workers Union, ledet av førsteamanuensis Kjell Tore Innervik.",en:"Master's students from the Norwegian Academy of Music and musicians from Oslo Sinfonietta played Andriessen's Workers Union, led by associate professor Kjell Tore Innervik."}},
     {n:"Philipp Geist", img:"geist", r:{no:"Visuals",en:"Visuals"}, p:{no:"Berlinbasert kunstner som jobber med projeksjoner, lysinstallasjoner, foto og maleri. Laget visuals til kveldskonsertene.",en:"Berlin-based artist working with projections, light installations, photography and painting. Created visuals for the evening concerts."}},
     {n:"Morning Beat", img:"ms-05116", r:{no:"Morgenrave",en:"Morning rave"}, p:{no:"Organisasjon som bruker kultur og elektronisk musikk i rusforebyggende arbeid. Alle arrangementene er rusfrie.",en:"An organisation using culture and electronic music to prevent substance misuse. All events are drug-free."}},
-    {n:"Cecilie Kristoffersen", img:"", r:{no:"Yogainstruktør",en:"Yoga instructor"}, p:{no:"Ledet yogakonserten med levende musikk etter morgenraven.",en:"Led the yoga concert with live music after the morning rave."}}
+    {n:"Cecilie Kristoffersen", img:"ms-3309", pos:"50% 22%", r:{no:"Yogainstruktør",en:"Yoga instructor"}, p:{no:"Ledet yogakonserten med levende musikk etter morgenraven.",en:"Led the yoga concert with live music after the morning rave."}}
   ],
   2025:[
     {n:"Ensemble Allegria", img:"ms-06367", r:{no:"Kammerorkester",en:"Chamber orchestra"}, p:{no:"Selvdrevet ensemble fra 2008, ledet av Maria Angelika Carlsen, kjent for lekent samspill og flere prisbelønte plater.",en:"Self-run ensemble founded in 2008, led by Maria Angelika Carlsen, known for playful ensemble playing and several award-winning albums."}},
@@ -690,7 +726,7 @@ const PEOPLE = {
     {n:"Quantaloop", img:"", r:{no:"Technoduo",en:"Techno duo"}, p:{no:"Psykedelisk technoduo som spilte live i krypten.",en:"A psychedelic techno duo who played live in the crypt."}},
     {n:"TheFunnyPack", img:"", r:{no:"DJ-duo",en:"DJ duo"}, p:{no:"DJ-duoen bak morgenraven.",en:"The DJ duo behind the morning rave."}},
     {n:"Morning Beat", img:"ms-05116", r:{no:"Morgenrave",en:"Morning rave"}, p:{no:"Organisasjon som bruker elektronisk musikk i rusforebyggende arbeid. Alle arrangementene er rusfrie.",en:"An organisation using electronic music to prevent substance misuse. All events are drug-free."}},
-    {n:"Cecilie Kristoffersen", img:"", r:{no:"Yogainstruktør",en:"Yoga instructor"}, p:{no:"Ledet yogakonserten med levende musikk.",en:"Led the yoga concert with live music."}}
+    {n:"Cecilie Kristoffersen", img:"ms-3309", pos:"50% 22%", r:{no:"Yogainstruktør",en:"Yoga instructor"}, p:{no:"Ledet yogakonserten med levende musikk.",en:"Led the yoga concert with live music."}}
   ],
   2024:[
     {n:"Kringkastingsorkestret", img:"interpulskork-02819", r:{no:"Orkester",en:"Orchestra"}, p:{no:"Landsdekkende orkester med et svært allsidig repertoar. Spilte KORK i Surround, sendt på NRK.",en:"Norway's nationwide radio orchestra with a wide-ranging repertoire. Played KORK in Surround, broadcast on NRK."}},
@@ -707,23 +743,39 @@ const PEOPLE = {
   ]
 };
 const IPE = [
-  {n:"Sondre Fjose Sandberg", r:{no:"Fiolin",en:"Violin"}},
-  {n:"Daniel Lyngstad", r:{no:"Fiolin",en:"Violin"}},
-  {n:"Matias Jentoft", r:{no:"Fiolin og bratsj",en:"Violin and viola"}},
-  {n:"Jakob Dingstad", r:{no:"Bratsj og dirigent",en:"Viola and conductor"}},
-  {n:"Sverre Barratt-Due", r:{no:"Cello",en:"Cello"}},
-  {n:"Kristoffer Almås", r:{no:"Slagverk",en:"Percussion"}},
-  {n:"Bjørn-Christian Svarstad", r:{no:"Slagverk",en:"Percussion"}}
+  {n:"Sondre Fjose Sandberg", img:"m-sondre", pos:"50% 18%", r:{no:"Fiolin",en:"Violin"},
+   bio:{no:["Jobber i Stavanger Symfoniorkester","Norsk-svensk fiolinist fra Voss","Utdanning fra NMH, KMH og Edsberg slott","Medlem av Quartetto Testosterone siden 2010","Sliten småbarnsfar"],
+        en:["Plays in the Stavanger Symphony Orchestra","Norwegian-Swedish violinist from Voss","Studied at NMH, KMH and Edsberg Castle","Member of Quartetto Testosterone since 2010","Tired father of small children"]}},
+  {n:"Daniel Lyngstad", img:"m-daniel", pos:"50% 20%", r:{no:"Fiolin",en:"Violin"},
+   bio:{no:["Fiolinist ved Den Norske Opera & Ballett","Trønder, barokkfiolinist og kulturentreprenør","Driver Live Klassisk og Interpuls","Medlem av Quartetto Testosterone siden 2010","Sliten småbarnsfar"],
+        en:["Violinist at the Norwegian National Opera & Ballet","From Trøndelag, baroque violinist and cultural entrepreneur","Runs Live Klassisk and Interpuls","Member of Quartetto Testosterone since 2010","Tired father of small children"]}},
+  {n:"Matias Jentoft", img:"m-matias", pos:"50% 30%", r:{no:"Fiolin og bratsj",en:"Violin and viola"},
+   bio:{no:["Seniorrådgiver i Språkrådet","Norsk-finsk fiolinist fra Oslo","Utdannet ved NMH og Sibeliusakademiet","Grunnla Quartetto Testosterone i 2008","Aktiv morgenraver og minimalismeentusiast"],
+        en:["Senior adviser at the Language Council of Norway","Norwegian-Finnish violinist from Oslo","Studied at NMH and the Sibelius Academy","Co-founded Quartetto Testosterone in 2008","Avid morning raver and minimalism enthusiast"]}},
+  {n:"Jakob Dingstad", img:"m-jakob", pos:"62% 62%", r:{no:"Bratsj og dirigent",en:"Viola and conductor"},
+   bio:{no:["Solobratsjist i Finlands Radios Symfoniorkester","Aktiv dirigent, tar for tiden mastergrad ved KMH i Stockholm","Grunnla Quartetto Testosterone i 2008","Sliten småbarnsfar"],
+        en:["Principal viola of the Finnish Radio Symphony Orchestra","Active conductor, currently taking a master's at KMH in Stockholm","Co-founded Quartetto Testosterone in 2008","Tired father of small children"]}},
+  {n:"Sverre Barratt-Due", img:"m-sverre", pos:"50% 15%", r:{no:"Cello",en:"Cello"},
+   bio:{no:["Nestgruppeleder i Kringkastingsorkestret siden 2017","Cellist fra Bærum og Bodø/Glimt-supporter","Medlem av Quartetto Testosterone siden 2008","Sliten småbarnsfar"],
+        en:["Assistant principal cello in the Norwegian Radio Orchestra since 2017","Cellist from Bærum and Bodø/Glimt supporter","Member of Quartetto Testosterone since 2008","Tired father of small children"]}},
+  {n:"Kristoffer Almås", img:"m-kristoffer", pos:"55% 28%", r:{no:"Slagverk",en:"Percussion"},
+   bio:{no:["Allsidig frilansslagverker fra Mosjøen","Festivalsjef for Festspillene i Helgeland","Medlem av PERCelleh","Utdanning fra NMH og Syddansk Musikkonservatorium"],
+        en:["Versatile freelance percussionist from Mosjøen","Festival director of Festspillene i Helgeland","Member of PERCelleh","Studied at NMH and the Danish National Academy of Music"]}},
+  {n:"Bjørn-Christian Svarstad", img:"m-bc", pos:"50% 30%", r:{no:"Slagverk",en:"Percussion"},
+   bio:{no:["Slagverker i SISU og Forsvarets stabsmusikkorps","Trønder","Medlem av PERCelleh","Utdanning fra NMH"],
+        en:["Percussionist in SISU and the Norwegian Armed Forces Staff Band","From Trøndelag","Member of PERCelleh","Studied at NMH"]}}
 ];
 const IPE_GUEST = {no:["+ gjestemusikere","Fra små til større ensembler"], en:["+ guest musicians","From small to larger ensembles"]};
 
 const ALBUMS = [
-  {h:{no:"Interpuls 2026",en:"Interpuls 2026"}, c:"Foto: Sveinung Hoel Bjorå og Euishin Kim", imgs:["sh-08292","sh-08035","sh-07912","sh-02634","sh-08121","sh-08098","sh-02585","sh-08286","oslos13","sh-08322","sh-02293","sh-07895","sh-08051","sh-08181","sh-08328","sh-02497","dsc00946"]},
-  {h:{no:"Interpuls 2025",en:"Interpuls 2025"}, c:"Foto: Magnus Skrede", imgs:["ms-05282","ms-04161","ms-05485","ms-06594","ms-05910","ms-06933","ms-06319-enhanced","ms-3505","ms-06238","ms-04188","ms-05974","ms-06367","ms-06510","ms-06740","ms-05024","ms-05116"]},
-  {h:{no:"Interpuls 2024",en:"Interpuls 2024"}, c:"Foto: Interpuls", imgs:["interpulskork-02819","interpuls24-03172"]},
+  {h:{no:"Interpuls 2026",en:"Interpuls 2026"}, c:"Foto: Sveinung Hoel Bjorå, Euishin Kim, Adrien Le Gall og Daniel Lyngstad", imgs:["sh-08292","ip26-dl9807","sh-08035","sh-07912","sh-02634","sh-08121","sh-08098","sh-02585","sh-08286","oslos13","sh-08322","sh-02293","sh-07895","sh-08051","sh-08181","sh-08328","sh-02497","dsc00946"]},
+  {h:{no:"Interpuls 2025",en:"Interpuls 2025"}, c:"Foto: Magnus Skrede", imgs:["ms-05282","ms-3476","ms-05813","ms-3495","ms-3368","ms-05766","ms-3457","ms-05748","ms-3309","ms-04161","ms-05485","ms-06594","ms-05910","ms-06933","ms-06319-enhanced","ms-3505","ms-06238","ms-04188","ms-05974","ms-06367","ms-06510","ms-06740","ms-05024","ms-05116"]},
+  {h:{no:"Interpuls 2024",en:"Interpuls 2024"}, c:"Foto: Adrien Le Gall", imgs:["interpulskork-02819","ip24-03124","interpuls24-03172","ip24-03133","ip24-03099","ip24-1020089","ip24-03194"]},
   {h:{no:"Interpuls 2023",en:"Interpuls 2023"}, c:"Foto: Interpuls", imgs:["ip23-l3","ip23-f8","ip23-l10","ip23-l9","ip23-l23","ip23-l8"]},
   {h:{no:"Interpuls 2022 · In the Penal Colony",en:"Interpuls 2022 · In the Penal Colony"}, c:"Foto: Adrien Le Gall", imgs:["ip22-pc4","ip22-pc3","ip22-pc2"]}
 ];
+const PHOTOG = [[/^sh-/,"Sveinung Hoel Bjorå"],[/^dsc/,"Euishin Kim"],[/^ms-/,"Magnus Skrede"],[/^(ip24-|interpuls24-|interpulskork-|ip22-|oslos)/,"Adrien Le Gall"],[/^ip26-dl/,"Daniel Lyngstad"]];
+const credit = im => { const m = PHOTOG.find(([re])=>re.test(im)); return m ? m[1] : "Interpuls"; };
 const RADIO = [
   {img:"sh-08292", h:{no:"KORK i Surround 2026",en:"KORK in Surround 2026"}, p:{no:"På konsert med KORK · NRK Radio",en:"På konsert med KORK · NRK Radio"}, url:"https://radio.nrk.no/serie/paa-konsert-med-kork/MKKL15002026"},
   {img:"interpulskork-02819", h:{no:"KORK i Surround 2024",en:"KORK in Surround 2024"}, p:{no:"På konsert med KORK · NRK Radio",en:"På konsert med KORK · NRK Radio"}, url:"https://radio.nrk.no/serie/paa-konsert-med-kork/MKKL15000825"},
@@ -802,7 +854,7 @@ function personCard(p, y, withBio=true){
 
 const vids = () => VIDEOS.filter(v=>!v.from || Date.now() >= Date.parse(v.from));
 function audBand(){
-  return `<section class="aud force-dark"><img src="${IMG('ms-06933')}" alt="" loading="lazy"><div class="wrap">
+  return `<section class="aud force-dark" data-dn="aud"><img src="${IMG('ms-06933')}" alt="" loading="lazy"><div class="wrap">
     <div class="eyebrow" style="margin-bottom:22px">${t("statsEyebrow")}</div>
     <p class="big">${t("aud")}</p>
     <div class="audq">${t("audQ").map(q=>`<blockquote>«${q[0]}»</blockquote>`).join("")}</div>
@@ -810,7 +862,7 @@ function audBand(){
 }
 function pressHome(){
   const two = PRESS.list.filter(q=>q.home);
-  return `<section><div class="wrap">
+  return `<section data-dn="press"><div class="wrap">
     <div class="eyebrow" style="margin-bottom:22px">${t("pressEyebrow")}</div>
     <blockquote style="margin:0"><p class="quote-big">${esc(L(PRESS.big))}</p><cite>${PRESS.big.who} <span>· ${PRESS.big.src}</span></cite></blockquote>
     <div class="quotes">${two.map(q=>`<blockquote><p>«${esc(L(q))}»</p><cite>${q.who} <span>· ${q.src}</span></cite></blockquote>`).join("")}</div>
@@ -870,7 +922,7 @@ function tbaPanel(){
 function home(){
   const mosaic = [["sh-08051","w3 h2"],["sh-08292","w3"],["ms-05910","w2"],["sh-02293",""],["sh-07895","w2"],["ms-06594","w2"],["ms-04188","w2"]];
   return `
-  <section class="hero force-dark"><div class="bg"><img src="${IMG('ms-05282')}" alt="Publikum og Philipp Geists visuals i Kulturkirken Jakob"><img class="s s1" src="${IMG('sh-08292')}" alt=""><img class="s s2" src="${IMG('sh-02293')}" alt=""><img class="s s3" src="${IMG('sh-08035')}" alt=""></div>
+  <section class="hero force-dark" data-dn="hero"><div class="bg"><img src="${IMG('ms-05282')}" alt="Publikum og Philipp Geists visuals i Kulturkirken Jakob"><img class="s s1" src="${IMG('sh-08292')}" alt=""><img class="s s2" src="${IMG('sh-02293')}" alt=""><img class="s s3" src="${IMG('sh-08035')}" alt=""></div>
     <div class="wrap">
       <span class="label"><b>//</b> ${t("heroEyebrow")}</span>
       <h1>${t("heroH")}</h1>
@@ -882,9 +934,10 @@ function home(){
   </section>
   ${RELEASED_2027 ? daysBrief() + artistsCarousel() : facts3()}
 
-  <section><div class="wrap split">
+  <section data-dn="intro"><div class="wrap split">
     <div>
-      <div class="eyebrow">${t("introEyebrow")}</div>
+      ${dots("xxoxxo")}
+      <div class="eyebrow" style="margin-top:22px">${t("introEyebrow")}</div>
       <h2>${t("introH")}</h2>
       <p class="lead">${t("introLead")}</p>
       <p>${t("introP")[0]}</p>
@@ -893,21 +946,21 @@ function home(){
     <div class="photo-stack"><img class="a" src="${IMG('sh-08035')}" alt=""><img class="b" src="${IMG('ms-05116')}" alt=""></div>
   </div></section>
 
-  <section class="band-2"><div class="wrap">
+  <section class="band-2" data-dn="fmt"><div class="wrap">
     <div class="sec-head"><div><div class="eyebrow">${t("fmtEyebrow")}</div><h2 style="margin-top:12px">${t("fmtH")}</h2></div></div>
     <div class="formats">${t("formats").map((f,i)=>`<div class="fmt"><div class="fi"><img src="${IMG(FMT_IMG[i])}" alt="" loading="lazy"></div><h3>${f[0]}</h3><p>${f[1]}</p></div>`).join("")}</div>
   </div></section>
 
   ${audBand()}
 
-  <section><div class="wrap">
+  <section data-dn="video"><div class="wrap">
     <div class="sec-head"><div><div class="eyebrow">${t("vidH")}</div><h2 style="margin-top:12px">${lang==="no"?"Se og hør Interpuls":"Watch Interpuls"}</h2></div><a class="btn ghost" href="#bilder">${t("toGallery")}</a></div>
     <div class="videos radio two">${vids().filter(v=>v.home).slice(0,2).map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
   </div></section>
 
   ${pressHome()}
 
-  <section class="band-2"><div class="wrap">
+  <section class="band-2" data-dn="gallery"><div class="wrap">
     <div class="sec-head"><div><div class="eyebrow">${t("galleryEyebrow")}</div><h2 style="margin-top:12px">${t("galleryH")}</h2></div><a class="btn ghost" href="#bilder">${t("toGallery")}</a></div>
     <div class="mosaic">${mosaic.map(m=>`<figure class="${m[1]}"><img src="${IMG(m[0])}" alt=""></figure>`).join("")}</div>
   </div></section>
@@ -916,7 +969,7 @@ function home(){
 }
 
 function newsBand(){
-  return `<section class="band-orange"><div class="wrap news">
+  return `<section class="band-orange" data-dn="news"><div class="wrap news">
     <div><h2>${t(RELEASED_2027?"newsH2":"newsH")}</h2><p>${t(RELEASED_2027?"newsP2":"newsP")}</p></div>
     <a class="btn" href="http://eepurl.com/hXy6Rn" target="_blank" rel="noopener">${t("newsBtn")}</a>
   </div></section>`;
@@ -994,25 +1047,25 @@ function media(){
     <div class="albums">${ALBUMS.map(a=>{ const n=a.imgs.length;
       const cls = i => n<5 ? (i===0?'w3 h2':'w3') : (i===0?'w3 h2':i===1?'w3':'w2');
       return `<div class="album"><h3>${esc(L(a.h))}</h3><p class="cred">${esc(a.c)}</p>
-      <div class="mosaic">${a.imgs.map((im,i)=>`<figure class="${cls(i)}"><img src="${IMG(im)}" alt="" loading="lazy"></figure>`).join("")}</div></div>`;}).join("")}</div>
+      <div class="mosaic">${a.imgs.map((im,i)=>`<figure class="${cls(i)}"><button class="lb-open" data-lb="${im}" aria-label="${lang==="no"?"Vis bildet større":"View larger"}"><img src="${IMG(im)}" alt="" loading="lazy"></button></figure>`).join("")}</div></div>`;}).join("")}</div>
   </div></section>`;
 }
 
 function about(){
   return `<div class="wrap page-hero"><span class="label"><b>//</b> Interpuls</span><h1>${t("omH")}</h1></div>
   <section style="padding-top:24px"><div class="wrap split">
-    <div><p class="lead" style="margin-top:0;font-size:1.35rem;line-height:1.45">${t("omLead")}</p>${t("omP").map(p=>`<p style="margin-top:16px">${p}</p>`).join("")}</div>
+    <div>${dots("xxoxxoxx")}<p class="lead" style="margin-top:22px;font-size:1.35rem;line-height:1.45">${t("omLead")}</p>${t("omP").map(p=>`<p style="margin-top:16px">${p}</p>`).join("")}</div>
     <div class="photo-stack"><img class="a" src="${IMG('sh-08098')}" alt="Interpuls Ensemble"><img class="b" src="${IMG('ms-06319-enhanced')}" alt=""></div>
   </div></section>
   <section class="band-2" id="ensemble"><div class="wrap">
     <div class="sec-head"><div><div class="eyebrow">${lang==="no"?"Arrangøren":"The organiser"}</div><h2 style="margin-top:12px">${t("ipeH")}</h2></div></div>
     <div class="ipe-text">${t("ipeLong").map(p=>`<p>${p}</p>`).join("")}</div>
-    <div class="members">${IPE.map(m=>`<article class="person member"><div class="ph"><span class="mono">${m.n.split(/[ -]+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("")}</span></div><div class="role">${esc(L(m.r))}</div><h3>${esc(m.n)}</h3>
-      <details><summary>${t("readBio")}</summary><p class="soon">${t("bioSoon")}</p></details></article>`).join("")}
+    <div class="members">${IPE.map(m=>`<article class="person member"><div class="ph">${m.img?`<img src="${IMG(m.img)}" alt="${esc(m.n)}" loading="lazy"${m.pos?` style="object-position:${m.pos}"`:""}>`:`<span class="mono">${m.n.split(/[ -]+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("")}</span>`}</div><div class="role">${esc(L(m.r))}</div><h3>${esc(m.n)}</h3>
+      ${m.bio?`<details><summary>${t("readBio")}</summary><ul class="mbio">${L(m.bio).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>`:""}</article>`).join("")}
       <article class="person member guest"><div class="ph"><img src="${IMG('sh-08098')}" alt="" loading="lazy"></div><div class="role">${IPE_GUEST[lang][1]}</div><h3>${IPE_GUEST[lang][0]}</h3></article></div>
     <div class="dir">
       <div class="eyebrow">${t("dirH")}</div>
-      <div><h3>Daniel Lyngstad</h3><p>${t("dirP")}</p></div>
+      <div class="dir-in"><img src="${IMG('m-daniel-dir')}" alt="Daniel Lyngstad" loading="lazy"><div><h3>Daniel Lyngstad</h3><p>${t("dirP")}</p></div></div>
     </div>
   </div></section>
   <section><div class="wrap">
@@ -1066,6 +1119,8 @@ function renderNav(cur){
   document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent = t(el.dataset.i); });
   document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.lang===lang));
   document.documentElement.lang = lang==="no" ? "nb" : "en";
+  const tb = document.getElementById("topBtn");
+  if(RELEASED_2027){ tb.href="https://www.ticketmaster.no/"; tb.textContent=t("tickets"); } else { tb.href="http://eepurl.com/hXy6Rn"; tb.textContent=t("newsletter"); }
 }
 function renderFoot(){
   document.getElementById("foot").innerHTML = `
@@ -1115,10 +1170,39 @@ document.addEventListener("click", e=>{
   const sc = e.target.closest("[data-scroll]");
   if(sc){ const c=document.getElementById("carousel"); if(c) c.scrollBy({left:+sc.dataset.scroll*c.clientWidth*0.8,behavior:"smooth"}); return; }
   if(e.target.closest("#protoToggle")){ RELEASED_2027 = !RELEASED_2027; state.progYear = RELEASED_2027?2027:"tba"; state.pplYear = RELEASED_2027?2027:2026; route(); return; }
+  const lo = e.target.closest("[data-lb]");
+  if(lo){ const all=[...(lo.closest(".album")||document).querySelectorAll("[data-lb]")].map(b=>b.dataset.lb); lbOpen(all, all.indexOf(lo.dataset.lb)); return; }
+  if(e.target.closest("[data-lbx]") || e.target.id==="lb"){ lbClose(); return; }
+  const st = e.target.closest("[data-lbstep]");
+  if(st){ lbGo(+st.dataset.lbstep); return; }
   const lb = e.target.closest(".lang button");
   if(lb){ lang = lb.dataset.lang; try{localStorage.setItem("ip-lang",lang)}catch(_){ } route(); return; }
   if(e.target.closest("#menuBtn")){ const n=document.getElementById("mainNav"); const o=n.classList.toggle("open"); e.target.closest("#menuBtn").setAttribute("aria-expanded",o); }
 });
+const DN = {no:{hero:"Til toppen",intro:"Om festivalen",fmt:"Formatet",aud:"Publikum",video:"Video",press:"Presse",gallery:"Bilder",news:"Nyhetsbrev"},
+            en:{hero:"Back to top",intro:"About",fmt:"The format",aud:"Audience",video:"Video",press:"Press",gallery:"Photos",news:"Newsletter"}};
+let dnObs = null;
+function buildDotnav(page){
+  const nav = document.getElementById("dotnav"); if(dnObs){ dnObs.disconnect(); dnObs=null; }
+  const secs = page==="hjem" ? [...document.querySelectorAll("#app [data-dn]")] : [];
+  if(!secs.length){ nav.hidden = true; nav.innerHTML=""; return; }
+  nav.hidden = false;
+  nav.innerHTML = secs.map((s,i)=>`<button data-dnto="${i}" aria-label="${DN[lang][s.dataset.dn]}"><span>${DN[lang][s.dataset.dn]}</span><i></i></button>`).join("");
+  const btns = [...nav.querySelectorAll("button")];
+  const setActive = i => btns.forEach((b,j)=>b.classList.toggle("on", j===i));
+  setActive(0);
+  dnObs = new IntersectionObserver(es=>{ es.forEach(en=>{ if(en.isIntersecting) setActive(secs.indexOf(en.target)); }); }, {rootMargin:"-45% 0px -50% 0px"});
+  secs.forEach(s=>dnObs.observe(s));
+  nav.onclick = e=>{ const b=e.target.closest("[data-dnto]"); if(!b) return; const t=secs[+b.dataset.dnto]; window.scrollTo({top: t.getBoundingClientRect().top + scrollY - 68, behavior:"smooth"}); };
+}
+let LB = {list:[], i:0};
+function lbShow(){ const im = LB.list[LB.i]; document.getElementById("lbImg").src = IMG(im); document.getElementById("lbCap").textContent = (lang==="no"?"Foto: ":"Photo: ") + credit(im) + `  ·  ${LB.i+1} / ${LB.list.length}`; }
+function lbOpen(list,i){ LB = {list, i:Math.max(0,i)}; lbShow(); const l=document.getElementById("lb"); l.hidden=false; document.body.style.overflow="hidden"; l.querySelector(".lb-x").focus(); }
+function lbClose(){ document.getElementById("lb").hidden=true; document.body.style.overflow=""; }
+function lbGo(d){ LB.i = (LB.i + d + LB.list.length) % LB.list.length; lbShow(); }
+document.addEventListener("keydown", e=>{ if(document.getElementById("lb").hidden) return; if(e.key==="Escape") lbClose(); if(e.key==="ArrowRight") lbGo(1); if(e.key==="ArrowLeft") lbGo(-1); });
+let tx=null; document.getElementById("lb").addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
+document.getElementById("lb").addEventListener("touchend",e=>{ if(tx===null) return; const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>50) lbGo(dx<0?1:-1); tx=null; });
 lastPage = route();
 document.addEventListener("submit", e=>{
   if(e.target.id!=="cform") return;
