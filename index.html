@@ -441,11 +441,7 @@ const T = {
     heroH:'rommet <span class="gap">mellom</span> slagene',
     heroDate:"25.–27. februar 2027", heroVenue:"Kulturkirken Jakob, Oslo",
     seeProgram:"Se programmet", newsletter:"Få beskjed ved programslipp!",
-    days:[
-      ["Torsdag 25.2","By og maskin","Steve Reichs City Life og Nymans kammeropera The Man Who Mistook His Wife for a Hat."],
-      ["Fredag 26.2","Natur og årstider","Morgenrave og yogakonsert. Om kvelden Trondheimsolistene og Eldbjørg Hemsing med Vivaldi Recomposed."],
-      ["Lørdag 27.2","Menneske og musikk","Barnekonsert, urfremføring av Veslemøy Narvesens Pulse, Andriessen og midnattsopera."]
-    ],
+    days:[],
     introEyebrow:"Om festivalen",
     introH:"En klassisk konsert slik du aldri har opplevd den",
     introLead:"Interpuls er en årlig festival i Kulturkirken Jakob, laget av musikere som lever og ånder for å dele musikken.",
@@ -504,11 +500,7 @@ const T = {
     heroH:'the space <span class="gap">between</span> the beats',
     heroDate:"25–27 February 2027", heroVenue:"Kulturkirken Jakob, Oslo",
     seeProgram:"See the programme", newsletter:"Get notified when the programme is out!",
-    days:[
-      ["Thursday 25.2","City and machine","Steve Reich's City Life and Nyman's chamber opera The Man Who Mistook His Wife for a Hat."],
-      ["Friday 26.2","Nature and seasons","Morning rave and yoga concert. In the evening the Trondheim Soloists and Eldbjørg Hemsing play Vivaldi Recomposed."],
-      ["Saturday 27.2","Man and music","Children's concert, the premiere of Veslemøy Narvesen's Pulse, Andriessen and a midnight opera."]
-    ],
+    days:[],
     introEyebrow:"About the festival",
     introH:"A classical concert like you've never experienced one",
     introLead:"Interpuls is an annual festival at Kulturkirken Jakob, created by musicians who live and breathe for sharing music.",
@@ -580,38 +572,6 @@ const PRESS = {
 
 // program data (structure mirrors what a CMS would hold: year > day > event > pulses)
 const PROGRAM = {
-  2027:{prelim:true, days:[
-    {d:{no:"Torsdag",en:"Thursday"}, date:"25.02.27", theme:{no:"By og maskin",en:"City and machine"}, events:[
-      {t:"19:00", img:"ms-06788", h:{no:"City Life & opera",en:"City Life & opera"},
-       who:"Nordic Wind Orchestra · Interpuls Ensemble · Victoria Putterman · Sofia Nesje Enger · Petter Moen · Johannes Nikolai Aas · Philipp Geist",
-       desc:{no:"Festivalen åpner med Steve Reichs City Life, før vår nye oppsetning av Michael Nymans kammeropera The Man Who Mistook His Wife for a Hat, basert på Oliver Sacks. Operaen har aldri vært satt opp i Oslo.",
-             en:"The festival opens with Steve Reich's City Life, followed by our new production of Michael Nyman's chamber opera The Man Who Mistook His Wife for a Hat, based on Oliver Sacks. The opera has never been staged in Oslo."},
-       more:{no:"Operaen bygger på en kasusstudie i Oliver Sacks' bok med samme navn. Dr. P, en sanger og musikklærer, kan se, men ikke lenger kjenne igjen det han ser. Nevrologen Dr. S og fru P prøver å forstå hvordan han klarer seg gjennom dagen, og oppdager at han har funnet en annen måte å ordne verden på: gjennom musikk. Nymans musikk er klar, varm og full av tørr humor, og vever inn sanger av Robert Schumann. Hele kirkerommet brukes som scene, med publikum tett på sangerne og orkesteret. Med Petter Moen, Johannes Nikolai Aas og Sofia Nesje Enger, regi Victoria Putterman og dirigent Jakob Dingstad.",
-             en:"The opera is based on a case study in Oliver Sacks' book of the same name. Dr P, a singer and music teacher, can see, but no longer recognise what he sees. The neurologist Dr S and Mrs P try to understand how he gets through the day, and discover that he has found another way of ordering the world: through music. Nyman's score is lucid, warm and full of dry humour, and weaves in songs by Robert Schumann. The whole church is used as a stage, with the audience close to the singers and orchestra. With Petter Moen, Johannes Nikolai Aas and Sofia Nesje Enger, directed by Victoria Putterman and conducted by Jakob Dingstad."},
-       pulses:[["19:00","PULS 1",{no:"Reich: City Life",en:"Reich: City Life"}],["20:00","PULS 2",{no:"Nyman: The Man Who Mistook His Wife for a Hat · regi Victoria Putterman, dirigent Jakob Dingstad",en:"Nyman: The Man Who Mistook His Wife for a Hat · dir. Victoria Putterman, cond. Jakob Dingstad"}]]}
-    ]},
-    {d:{no:"Fredag",en:"Friday"}, date:"26.02.27", theme:{no:"Natur og årstider",en:"Nature and seasons"}, events:[
-      {t:"07:00", img:"ms-04161", h:{no:"Morning Beat & yogakonsert",en:"Morning Beat & yoga concert"},
-       who:"Morning Beat · Interpuls Ensemble · Cecilie Kristoffersen",
-       desc:{no:"Rusfri morgenrave fra klokka sju, og yogakonsert med levende musikk klokka ni. Ta med egen matte.",
-             en:"A sober morning rave from 7 am, and a yoga concert with live music at 9 am. Bring your own mat."}},
-      {t:"19:00", img:"hemsing", h:{no:"Vivaldi Recomposed",en:"Vivaldi Recomposed"},
-       who:"Trondheimsolistene · Eldbjørg Hemsing · Philipp Geist",
-       desc:{no:"Max Richters Recomposed: Vivaldi – The Four Seasons, musikk av Jessie Montgomery og urfremføringen av et nytt bestillingsverk av Ellen Lindquist.",
-             en:"Max Richter's Recomposed: Vivaldi – The Four Seasons, music by Jessie Montgomery and the world premiere of a new commission by Ellen Lindquist."}, tag:"premiere"}
-    ]},
-    {d:{no:"Lørdag",en:"Saturday"}, date:"27.02.27", theme:{no:"Menneske og musikk",en:"Man and music"}, events:[
-      {t:"13:00", img:"ms-3505", h:{no:"Barnekonsert",en:"Children's concert"},
-       who:"Nordic Wind Orchestra · Interpuls Ensemble · Philipp Geist",
-       desc:{no:"En konsert for de minste, der barna tegner og Philipp Geist gjør tegningene om til visuals.",
-             en:"A concert for the youngest, where the children draw and Philipp Geist turns the drawings into visuals."}},
-      {t:"19:30", img:"sh-08035", h:{no:"Interpuls: Pulse",en:"Interpuls: Pulse"},
-       who:"Veslemøy Narvesen · Henriette Eilertsen · Mats Eilertsen · Torben Snekkestad · Interpuls Ensemble · Nordic Wind Orchestra",
-       desc:{no:"En kveld i korte sett. I sentrum står urfremføringen av Veslemøy Narvesens Pulse, der jazz møter klassisk.",
-             en:"An evening of short sets, centred on the premiere of Veslemøy Narvesen's Pulse, where jazz meets classical."}, tag:"premiere",
-       pulses:[["19:30","PULS 1",{no:"Narvesen: Pulse (urfremføring)",en:"Narvesen: Pulse (world premiere)"}],["20:15","PULS 2",{no:"Andriessen: M is for Man, Music, Mozart",en:"Andriessen: M is for Man, Music, Mozart"}],["21:00","PULS 3",{no:"Veslemøy Narvesen kvartett",en:"Veslemøy Narvesen quartet"}],["22:00","PULS 4",{no:"Midnattsopera: Nyman, The Man Who Mistook His Wife for a Hat",en:"Midnight opera: Nyman, The Man Who Mistook His Wife for a Hat"}]]}
-    ]}
-  ]},
   2026:{days:[
     {d:{no:"Torsdag",en:"Thursday"}, date:"12.02.26", events:[
       {t:"07:00", img:"ms-05116", h:{no:"Morning Beat & yogakonsert",en:"Morning Beat & yoga concert"},
@@ -697,22 +657,11 @@ const PROGRAM = {
     [{no:"Drumming",en:"Drumming"},{no:"Reichs Drumming med SISU Percussion, PERCelleh og NMH.",en:"Reich's Drumming with SISU Percussion, PERCelleh and NMH."}]
   ]},
   2020:{highlights:[
-    [{no:"Første festival",en:"The first festival"},{no:"Interpuls arrangeres for første gang i Kulturkirken Jakob, med musikk, kunst og video. 200 besøkende.",en:"Interpuls is held for the first time at Kulturkirken Jakob, with music, art and video. 200 visitors."}]
+    [{no:"Første festival",en:"The first festival"},{no:"Interpuls arrangeres for første gang i Kulturkirken Jakob, med musikk, kunst og video.",en:"Interpuls is held for the first time at Kulturkirken Jakob, with music, art and video."}]
   ]}
 };
 
 const PEOPLE = {
-  2027:[
-    {n:"Trondheimsolistene", img:"", r:{no:"Kammerorkester",en:"Chamber orchestra"}, p:{no:"Et av Norges ledende kammerorkestre, grunnlagt i 1988. Kunstnerisk leder er Guro Kleven Hagen.",en:"One of Norway's leading chamber orchestras, founded in 1988. Artistic director: Guro Kleven Hagen."}},
-    {n:"Eldbjørg Hemsing", img:"hemsing", pos:"50% 18%", r:{no:"Fiolin",en:"Violin"}, p:{no:"Sony Classical-artist som har spilt i Lincoln Center, Wigmore Hall og Elbphilharmonie.",en:"Sony Classical artist who has performed at Lincoln Center, Wigmore Hall and the Elbphilharmonie."}},
-    {n:"Nordic Wind Orchestra", img:"", r:{no:"Blåseorkester",en:"Wind orchestra"}, p:{no:"Ledende nordiske blåsere med dirigent Andreas Hanson, som utforsker nye konsertformater.",en:"Leading Nordic wind players with conductor Andreas Hanson, exploring new concert formats."}},
-    {n:"Veslemøy Narvesen", img:"", r:{no:"Komponist og musiker",en:"Composer and musician"}, p:{no:"Skriver bestillingsverket Pulse for Interpuls Ensemble og sin egen gruppe med Henriette Eilertsen, Mats Eilertsen og Torben Snekkestad.",en:"Writes the commission Pulse for Interpuls Ensemble and her own group with Henriette Eilertsen, Mats Eilertsen and Torben Snekkestad."}},
-    {n:"Ellen Lindquist", img:"", r:{no:"Komponist",en:"Composer"}, p:{no:"Urfremfører et nytt verk med Trondheimsolistene. Musikken hennes har røtter i naturen.",en:"Premieres a new work with the Trondheim Soloists. Her music is rooted in the natural world."}},
-    {n:"Philipp Geist", img:"geist", r:{no:"Visuals",en:"Visuals"}, p:{no:"Tysk kunstner og pioner innen videomapping. Lager visuals til alle kveldskonsertene.",en:"German artist and pioneer of video mapping. Creates visuals for every evening concert."}},
-    {n:"Victoria Putterman", img:"", r:{no:"Regi, opera",en:"Director, opera"}, p:{no:"Regisserte In the Penal Colony på Interpuls i 2022, og setter opp Nymans The Man Who Mistook His Wife for a Hat.",en:"Directed In the Penal Colony at Interpuls in 2022, and stages Nyman's The Man Who Mistook His Wife for a Hat."}},
-    {n:"Sofia Nesje Enger · Petter Moen · Johannes Nikolai Aas", img:"", r:{no:"Sangere, opera",en:"Singers, opera"}, p:{no:"Sopran, tenor og baryton i Nymans kammeropera.",en:"Soprano, tenor and baritone in Nyman's chamber opera."}},
-    {n:"Morning Beat & Cecilie Kristoffersen", img:"ms-05116", r:{no:"Morgenrave og yoga",en:"Morning rave and yoga"}, p:{no:"Rusfrie morgenraves med DJ, dans og yoga. Cecilie Kristoffersen leder yogakonserten.",en:"Sober morning raves with DJs, dance and yoga. Cecilie Kristoffersen leads the yoga concert."}}
-  ],
   2026:[
     {n:"Kringkastingsorkestret", img:"sh-08292", r:{no:"Orkester",en:"Orchestra"}, p:{no:"Spilte KORK i Surround med dirigent Bas Wiegers.",en:"Performed KORK in Surround with conductor Bas Wiegers."}},
     {n:"Det Norske Kammerorkester", img:"dsc00946", r:{no:"Kammerorkester",en:"Chamber orchestra"}, p:{no:"Lørdagens husorkester, ledet av Pekka Kuusisto.",en:"Saturday's resident orchestra, led by Pekka Kuusisto."}},
@@ -780,33 +729,29 @@ const RADIO = [
   {img:"interpulskork-02819", h:{no:"KORK i Surround 2024",en:"KORK in Surround 2024"}, p:{no:"På konsert med KORK · NRK Radio",en:"På konsert med KORK · NRK Radio"}, url:"https://radio.nrk.no/serie/paa-konsert-med-kork/MKKL15000825"},
   {img:"interpuls24-03172", h:{no:"Reportasje fra Interpuls",en:"Radio feature on Interpuls"}, p:{no:"NRK P2 · Spillerom",en:"NRK P2 · Spillerom"}, url:"https://radio.nrk.no/serie/spillerom-soendag/MKMU03000724"}
 ];
+// from: videoen vises først fra dette tidspunktet
 const VIDEOS = [
   {img:"sh-08098", h:{no:"Steve Reich: Radio Rewrite I (utdrag)",en:"Steve Reich: Radio Rewrite I (excerpt)"}, p:{no:"Interpuls Ensemble, 12. februar 2026 · Visuals: Philipp Geist",en:"Interpuls Ensemble, 12 February 2026 · Visuals: Philipp Geist"}, url:"https://youtu.be/yMKLFHmjrx8", home:true},
-  {img:"sh-02634", h:{no:"Gustav Mahler: Urlicht",en:"Gustav Mahler: Urlicht"}, p:{no:"Astrid Nordstad og Interpuls Ensemble",en:"Astrid Nordstad and Interpuls Ensemble"}, url:"https://youtu.be/-dn7zcexuVM", home:true},
-  {img:"interpulskork-02819", h:{no:"Interpuls 2024",en:"Interpuls 2024"}, p:{no:"Film fra festivalen 2024",en:"Film from the 2024 festival"}, url:"https://interpuls.no/aktuelt/interpuls_2024"},
-  {img:"ms-06594", h:{no:"Caroline Shaw",en:"Caroline Shaw"}, p:{no:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall",en:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall"}, url:"https://interpuls.no/aktuelt/interpuls-2023-video-1"},
-  {img:"ip23-l10", h:{no:"Steve Reich",en:"Steve Reich"}, p:{no:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall",en:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall"}, url:"https://interpuls.no/aktuelt/interpuls-2023-video-2"}
+  {img:"sh-02634", h:{no:"Gustav Mahler: Urlicht",en:"Gustav Mahler: Urlicht"}, p:{no:"Astrid Nordstad og Interpuls Ensemble",en:"Astrid Nordstad and Interpuls Ensemble"}, url:"https://youtu.be/-dn7zcexuVM", home:true, from:"2026-10-23T18:00:00+02:00"},
+  {img:"interpulskork-02819", h:{no:"Interpuls 2024",en:"Interpuls 2024"}, p:{no:"Film fra festivalen 2024",en:"Film from the 2024 festival"}, url:"https://youtu.be/6wH9_fdKB78", home:true},
+  {img:"ms-06594", h:{no:"Caroline Shaw",en:"Caroline Shaw"}, p:{no:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall",en:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall"}, url:"https://youtu.be/BidUkELo2yw"},
+  {img:"ip23-l10", h:{no:"Steve Reich",en:"Steve Reich"}, p:{no:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall",en:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall"}, url:"https://youtu.be/0Gmb53kjP4s"}
 ];
 const TIMELINE = [
-  ["2027",{no:"Tre temadager",en:"Three themed days"},{no:"Nymans kammeropera, Trondheimsolistene med Eldbjørg Hemsing, Nordic Wind Orchestra og to urfremføringer.",en:"Nyman's chamber opera, the Trondheim Soloists with Eldbjørg Hemsing, the Nordic Wind Orchestra and two world premieres."}],
   ["2026",{no:"Tre dager, fulle hus",en:"Three days, full houses"},{no:"Det Norske Kammerorkester med Pekka Kuusisto og Loney Dear, KORK i Surround med Bas Wiegers, Oslo Sinfonietta og pop-up på Oslo S.",en:"The Norwegian Chamber Orchestra with Pekka Kuusisto and Loney Dear, KORK in Surround with Bas Wiegers, Oslo Sinfonietta and a pop-up at Oslo Central Station."}],
-  ["2025",{no:"Music for 18 Musicians",en:"Music for 18 Musicians"},{no:"Reichs mesterverk, morgenrave med Morning Beat, Feldman i tårnet og Trillepuls. 898 besøkende.",en:"Reich's masterpiece, a morning rave with Morning Beat, Feldman in the tower and Trillepuls. 898 visitors."}],
+  ["2025",{no:"Music for 18 Musicians",en:"Music for 18 Musicians"},{no:"Reichs mesterverk, morgenrave med Morning Beat, Feldman i tårnet og Trillepuls.",en:"Reich's masterpiece, a morning rave with Morning Beat, Feldman in the tower and Trillepuls."}],
   ["2024",{no:"KORK i Surround",en:"KORK in Surround"},{no:"Kringkastingsorkestret og Guro Kleven Hagen rundt publikum, sendt på NRK. Urfremføring av Eyolf Dales Into Pulse.",en:"The Norwegian Radio Orchestra and Guro Kleven Hagen around the audience, broadcast on NRK. Premiere of Eyolf Dale's Into Pulse."}],
   ["2023",{no:"Hvilepuls",en:"Resting pulse"},{no:"Sammenhengende konsert med publikum på tepper og sofaer, og tre urfremføringer.",en:"A continuous concert with the audience on rugs and sofas, and three world premieres."}],
   ["2022",{no:"Glass-opera i Norge",en:"Glass opera in Norway"},{no:"Norgespremiere på Philip Glass' In the Penal Colony, og Reichs Drumming.",en:"Norwegian premiere of Philip Glass' In the Penal Colony, and Reich's Drumming."}],
   ["2021",{no:"Pandemiår",en:"Pandemic year"},{no:"Festivalen ble delvis avlyst og delvis utsatt til 2022.",en:"The festival was partly cancelled and partly postponed to 2022."},true],
-  ["2020",{no:"Første festival",en:"The first festival"},{no:"Interpuls arrangeres for første gang i Kulturkirken Jakob. 200 besøkende.",en:"Interpuls is held for the first time at Kulturkirken Jakob. 200 visitors."}]
+  ["2020",{no:"Første festival",en:"The first festival"},{no:"Interpuls arrangeres for første gang i Kulturkirken Jakob.",en:"Interpuls is held for the first time at Kulturkirken Jakob."}]
 ];
 // tba:true = vises også før programslipp
 const PARTNERS = [
   {n:"Kulturkirken Jakob", url:"https://www.jakob.no/", tba:true},
   {n:"Morning Beat", url:"https://www.morningbeat.no/", tba:true},
   {n:"Philipp Geist", url:"https://www.videogeist.de/", tba:true},
-  {n:"Kringkastingsorkestret", url:"https://www.nrk.no/kork/"},
-  {n:"Det Norske Kammerorkester", url:"https://www.nko.no/"},
-  {n:"Trondheimsolistene", url:"https://www.trondheimsolistene.no/"},
-  {n:"Nordic Wind Orchestra", url:"https://www.nordicwindorchestra.no/"},
-  {n:"Norges musikkhøgskole", url:"https://nmh.no/"}
+  {n:"Kringkastingsorkestret", url:"https://www.nrk.no/kork/"}
 ];
 const SUPPORT = [
   {n:"Kulturrådet", url:"https://www.kulturradet.no/"},
@@ -855,6 +800,7 @@ function personCard(p, y, withBio=true){
   return `<article class="person" id="p-${y}-${slug(p.n)}"><div class="ph">${ph}</div><div class="role">${esc(L(p.r))}</div><h3>${esc(p.n)}</h3>${withBio?`<p>${esc(L(p.p))}</p>`:""}${also}</article>`;
 }
 
+const vids = () => VIDEOS.filter(v=>!v.from || Date.now() >= Date.parse(v.from));
 function audBand(){
   return `<section class="aud force-dark"><img src="${IMG('ms-06933')}" alt="" loading="lazy"><div class="wrap">
     <div class="eyebrow" style="margin-bottom:22px">${t("statsEyebrow")}</div>
@@ -889,7 +835,7 @@ function artistsCarousel(){
     <div class="hl-head"><div><div class="eyebrow">${t("hlEyebrow")}</div></div>
       <div class="hl-nav"><button data-scroll="-1" aria-label="Forrige">←</button><button data-scroll="1" aria-label="Neste">→</button><a class="btn ghost" href="#medvirkende" style="margin-left:8px">${t("hlAll")}</a></div></div>
     <div class="carousel" id="carousel">${list.map(p=>`<a href="#medvirkende" data-person="${slug(p.n)}" data-pyear="2027" style="text-decoration:none">${personCard(p,"c",false)}</a>`).join("")}</div>
-    <p class="composers"><b>${t("musicBy")}</b>Steve Reich · Michael Nyman · Max Richter · Louis Andriessen · Jessie Montgomery · Ellen Lindquist · Veslemøy Narvesen</p>
+    
   </div></section>`;
 }
 function daysBrief(){
@@ -938,8 +884,7 @@ function home(){
 
   <section><div class="wrap split">
     <div>
-      ${dots("xxoxxo")}
-      <div class="eyebrow" style="margin-top:22px">${t("introEyebrow")}</div>
+      <div class="eyebrow">${t("introEyebrow")}</div>
       <h2>${t("introH")}</h2>
       <p class="lead">${t("introLead")}</p>
       <p>${t("introP")[0]}</p>
@@ -957,7 +902,7 @@ function home(){
 
   <section><div class="wrap">
     <div class="sec-head"><div><div class="eyebrow">${t("vidH")}</div><h2 style="margin-top:12px">${lang==="no"?"Se og hør Interpuls":"Watch Interpuls"}</h2></div><a class="btn ghost" href="#bilder">${t("toGallery")}</a></div>
-    <div class="videos radio two">${VIDEOS.filter(v=>v.home).map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
+    <div class="videos radio two">${vids().filter(v=>v.home).slice(0,2).map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
   </div></section>
 
   ${pressHome()}
@@ -1041,7 +986,7 @@ function media(){
   return `<div class="wrap page-hero"><span class="label"><b>//</b> Interpuls</span><h1>${t("medH")}</h1><p>${t("medP")}</p></div>
   <section style="padding-top:24px"><div class="wrap">
     <h2 class="subhead" style="margin-top:0;margin-bottom:22px">${t("vidH")}</h2>
-    <div class="videos">${VIDEOS.map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
+    <div class="videos">${vids().map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
     <h2 class="subhead" style="margin-bottom:8px">${t("radioH")}</h2>
     <p style="color:var(--mist);margin-bottom:22px">${lang==="no"?"Konsertopptak fra Interpuls og reportasje på NRK.":"Concert recordings from Interpuls and a feature on NRK."}</p>
     <div class="videos radio">${RADIO.map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play listen" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))} →</p></a>`).join("")}</div>
@@ -1056,7 +1001,7 @@ function media(){
 function about(){
   return `<div class="wrap page-hero"><span class="label"><b>//</b> Interpuls</span><h1>${t("omH")}</h1></div>
   <section style="padding-top:24px"><div class="wrap split">
-    <div>${dots("xxoxxoxx")}<p class="lead" style="margin-top:22px;font-size:1.35rem;line-height:1.45">${t("omLead")}</p>${t("omP").map(p=>`<p style="margin-top:16px">${p}</p>`).join("")}</div>
+    <div><p class="lead" style="margin-top:0;font-size:1.35rem;line-height:1.45">${t("omLead")}</p>${t("omP").map(p=>`<p style="margin-top:16px">${p}</p>`).join("")}</div>
     <div class="photo-stack"><img class="a" src="${IMG('sh-08098')}" alt="Interpuls Ensemble"><img class="b" src="${IMG('ms-06319-enhanced')}" alt=""></div>
   </div></section>
   <section class="band-2" id="ensemble"><div class="wrap">
