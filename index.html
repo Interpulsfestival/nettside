@@ -783,9 +783,10 @@ const RADIO = [
 ];
 // from: videoen vises først fra dette tidspunktet
 const VIDEOS = [
-  {img:"sh-08098", h:{no:"Steve Reich: Radio Rewrite I (utdrag)",en:"Steve Reich: Radio Rewrite I (excerpt)"}, p:{no:"Interpuls Ensemble, 12. februar 2026 · Visuals: Philipp Geist",en:"Interpuls Ensemble, 12 February 2026 · Visuals: Philipp Geist"}, url:"https://youtu.be/yMKLFHmjrx8", home:true},
+  {img:"sh-08322", h:{no:"Philip Glass: Dance fra Akhnaten (utdrag)",en:"Philip Glass: Dance from Akhnaten (excerpt)"}, p:{no:"Interpuls 2026 · Visuals: Philipp Geist",en:"Interpuls 2026 · Visuals: Philipp Geist"}, url:"https://youtu.be/ZMWX9WAHOuA", murl:"https://youtube.com/shorts/K4IqJvAelF0", home:true},
+  {img:"sh-08098", h:{no:"Steve Reich: Radio Rewrite I (utdrag)",en:"Steve Reich: Radio Rewrite I (excerpt)"}, p:{no:"Interpuls Ensemble, 12. februar 2026 · Visuals: Philipp Geist",en:"Interpuls Ensemble, 12 February 2026 · Visuals: Philipp Geist"}, url:"https://youtu.be/yMKLFHmjrx8"},
   {img:"sh-02634", h:{no:"Gustav Mahler: Urlicht",en:"Gustav Mahler: Urlicht"}, p:{no:"Astrid Nordstad og Interpuls Ensemble",en:"Astrid Nordstad and Interpuls Ensemble"}, url:"https://youtu.be/-dn7zcexuVM", home:true, from:"2026-10-23T18:00:00+02:00"},
-  {img:"interpulskork-02819", h:{no:"Interpuls 2024",en:"Interpuls 2024"}, p:{no:"Film fra festivalen 2024",en:"Film from the 2024 festival"}, url:"https://youtu.be/6wH9_fdKB78", home:true},
+  {img:"interpulskork-02819", h:{no:"Interpuls 2024",en:"Interpuls 2024"}, p:{no:"Film fra festivalen 2024",en:"Film from the 2024 festival"}, url:"https://youtu.be/6wH9_fdKB78"},
   {img:"ms-06594", h:{no:"Caroline Shaw",en:"Caroline Shaw"}, p:{no:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall",en:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall"}, url:"https://youtu.be/BidUkELo2yw"},
   {img:"ip23-l10", h:{no:"Steve Reich",en:"Steve Reich"}, p:{no:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall",en:"Interpuls Ensemble, 2023 · Video: Adrien Le Gall"}, url:"https://youtu.be/0Gmb53kjP4s"}
 ];
@@ -852,6 +853,9 @@ function personCard(p, y, withBio=true){
   return `<article class="person" id="p-${y}-${slug(p.n)}"><div class="ph">${ph}</div><div class="role">${esc(L(p.r))}</div><h3>${esc(p.n)}</h3>${withBio?`<p>${esc(L(p.p))}</p>`:""}${also}</article>`;
 }
 
+// murl: egen versjon (f.eks. YouTube Shorts) som brukes på mobil
+const isMobile = () => { try{ return matchMedia("(max-width:760px)").matches; }catch(e){ return false; } };
+const vurl = v => (v.murl && isMobile()) ? v.murl : v.url;
 const vids = () => VIDEOS.filter(v=>!v.from || Date.now() >= Date.parse(v.from));
 function audBand(){
   return `<section class="aud force-dark" data-dn="aud"><img src="${IMG('ms-06933')}" alt="" loading="lazy"><div class="wrap">
@@ -955,7 +959,7 @@ function home(){
 
   <section data-dn="video"><div class="wrap">
     <div class="sec-head"><div><div class="eyebrow">${t("vidH")}</div><h2 style="margin-top:12px">${lang==="no"?"Se og hør Interpuls":"Watch Interpuls"}</h2></div><a class="btn ghost" href="#bilder">${t("toGallery")}</a></div>
-    <div class="videos radio two">${vids().filter(v=>v.home).slice(0,2).map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
+    <div class="videos radio two">${vids().filter(v=>v.home).slice(0,2).map(v=>`<a class="video" href="${vurl(v)}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
   </div></section>
 
   ${pressHome()}
@@ -1039,7 +1043,7 @@ function media(){
   return `<div class="wrap page-hero"><span class="label"><b>//</b> Interpuls</span><h1>${t("medH")}</h1><p>${t("medP")}</p></div>
   <section style="padding-top:24px"><div class="wrap">
     <h2 class="subhead" style="margin-top:0;margin-bottom:22px">${t("vidH")}</h2>
-    <div class="videos">${vids().map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
+    <div class="videos">${vids().map(v=>`<a class="video" href="${vurl(v)}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))}</p></a>`).join("")}</div>
     <h2 class="subhead" style="margin-bottom:8px">${t("radioH")}</h2>
     <p style="color:var(--mist);margin-bottom:22px">${lang==="no"?"Konsertopptak fra Interpuls og reportasje på NRK.":"Concert recordings from Interpuls and a feature on NRK."}</p>
     <div class="videos radio">${RADIO.map(v=>`<a class="video" href="${v.url}" target="_blank" rel="noopener"><div class="th"><img src="${IMG(v.img)}" alt="" loading="lazy"><span class="play listen" aria-hidden="true"></span></div><h3>${esc(L(v.h))}</h3><p>${esc(L(v.p))} →</p></a>`).join("")}</div>
