@@ -18,6 +18,8 @@
 <meta property="og:locale" content="nb_NO">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicEvent","name":"Interpuls 2027","startDate":"2027-02-25","endDate":"2027-02-27","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":{"@type":"Place","name":"Kulturkirken Jakob","address":{"@type":"PostalAddress","streetAddress":"Hausmanns gate 14","postalCode":"0182","addressLocality":"Oslo","addressCountry":"NO"}},"image":"https://interpuls.no/img/og.jpg","description":"Festival for minimalistisk musikk i Kulturkirken Jakob, Oslo.","organizer":{"@type":"Organization","name":"Interpuls","url":"https://interpuls.no/","email":"hei@interpuls.no"}}</script>
+<script>window.goatcounter = {no_onload: true};</script>
+<script data-goatcounter="https://interpuls.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 <form name="kontakt" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
@@ -1137,11 +1139,27 @@ function route(){
   const key = (location.hash||"#hjem").slice(1);
   const page = ROUTES[key] ? key : "hjem";
   document.getElementById("app").innerHTML = ROUTES[page]();
-  renderNav(page); renderFoot();
+  renderNav(page); renderFoot(); gcPage(page);
   document.getElementById("mainNav").classList.remove("open");
   document.getElementById("menuBtn").setAttribute("aria-expanded","false");
   return page;
 }
+// --- Analytics (GoatCounter, uten cookies). Teller bare i produksjon.
+let gcLast = null;
+function gcSend(obj, tries=0){
+  if(IS_PROTO) return;
+  if(window.goatcounter && window.goatcounter.count){ try{ window.goatcounter.count(obj); }catch(e){} }
+  else if(tries < 30) setTimeout(()=>gcSend(obj, tries+1), 300);
+}
+function gcPage(page){
+  let path = page==="hjem" ? "/" : "/" + page;
+  if(page==="program" && state.progYear!=="tba") path += "/" + state.progYear;
+  if(page==="medvirkende") path += "/" + state.pplYear;
+  if(lang==="en") path = "/en" + (path==="/" ? "" : path);
+  if(path===gcLast) return; gcLast = path;
+  gcSend({path, title: document.title + " – " + page});
+}
+function gcEvent(name, title){ gcSend({path: name, title: title || name, event: true}); }
 function applyTheme(th){ document.documentElement.setAttribute("data-theme", th); }
 let theme = "dark";
 try{ const th = localStorage.getItem("ip-theme"); if(th==="light"||th==="dark") theme = th; }catch(e){}
@@ -1162,6 +1180,16 @@ function go(hash){
 let lastPage = null;
 window.addEventListener("hashchange", ()=>{ const p=route(); if(!doPendingScroll() && p!==lastPage){ window.scrollTo(0,0); } lastPage=p; });
 document.addEventListener("click", e=>{
+  const out = e.target.closest("a[href^='http']");
+  if(out){
+    const h = out.href; let n;
+    if(/ticketmaster/.test(h)) n = "klikk-billetter";
+    else if(/eepurl|mailchimp/.test(h)) n = "klikk-nyhetsbrev";
+    else if(/youtu/.test(h)) n = "klikk-video: " + ((out.querySelector("h3")||{}).textContent || h);
+    else if(/radio\.nrk/.test(h)) n = "klikk-radio: " + ((out.querySelector("h3")||{}).textContent || h);
+    else { try{ n = "utlenke: " + new URL(h).hostname.replace(/^www\./,""); }catch(_){ n = "utlenke"; } }
+    gcEvent(n, h);
+  }
   const pl = e.target.closest("[data-person]");
   if(pl){ e.preventDefault(); state.pplYear = +pl.dataset.pyear; pendingScroll = `p-${pl.dataset.pyear}-${pl.dataset.person}`; go("#medvirkende"); return; }
   const gt = e.target.closest("[data-goto]");
@@ -1214,7 +1242,7 @@ document.addEventListener("submit", e=>{
   const f = e.target, done = () => { f.hidden = true; document.getElementById("cdone").hidden = false; };
   if(IS_PROTO){ done(); return; }
   fetch("/", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:new URLSearchParams(new FormData(f)).toString()})
-    .then(r=>{ if(!r.ok) throw 0; done(); })
+    .then(r=>{ if(!r.ok) throw 0; done(); gcEvent("kontaktskjema-sendt"); })
     .catch(()=>{ alert(lang==="no"?"Noe gikk galt. Send oss gjerne en e-post på hei@interpuls.no.":"Something went wrong. Please email us at hei@interpuls.no."); });
 });
 </script>
