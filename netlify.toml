@@ -1,41 +1,52 @@
+# GENERERT – rediger kilden og bygg på nytt i stedet for å endre denne fila.
 [build]
   publish = "."
 
-# Gamle adresser fra forrige nettside
+# Gjeldende år (endres ved programslipp)
+[[redirects]]
+  from = "/medvirkende"
+  to = "/medvirkende/2026"
+  status = 302
+[[redirects]]
+  from = "/en/medvirkende"
+  to = "/en/medvirkende/2026"
+  status = 302
+
+# Gamle adresser fra forrige nettside (gjelder bare stier som ikke finnes som filer)
 [[redirects]]
   from = "/program/*"
-  to = "/#program"
-  status = 301
-[[redirects]]
-  from = "/program"
-  to = "/#program"
+  to = "/program"
   status = 301
 [[redirects]]
   from = "/medvirkende/*"
-  to = "/#medvirkende"
+  to = "/medvirkende"
   status = 301
 [[redirects]]
-  from = "/medvirkende"
-  to = "/#medvirkende"
+  from = "/en/program/*"
+  to = "/en/program"
+  status = 301
+[[redirects]]
+  from = "/en/medvirkende/*"
+  to = "/en/medvirkende"
   status = 301
 [[redirects]]
   from = "/aktuelt/*"
-  to = "/#bilder"
+  to = "/bilder"
   status = 301
 [[redirects]]
   from = "/aktuelt"
-  to = "/#bilder"
+  to = "/bilder"
   status = 301
 [[redirects]]
-  from = "/om"
-  to = "/#om"
-  status = 301
-[[redirects]]
-  from = "/kontakt"
-  to = "/#kontakt"
+  from = "/index.html"
+  to = "/"
   status = 301
 
 [[headers]]
   for = "/img/*"
   [headers.values]
     Cache-Control = "public, max-age=604800"
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
