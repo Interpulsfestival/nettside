@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Bygger interpuls.no på nytt fra kildefila (prototypen i Claude-artefaktet).
-#   tools/build.sh <kilde.html>              # før programslipp (2027 skjult)
-#   tools/build.sh <kilde.html> --released   # etter programslipp
+#   tools/build.sh <kilde.html> --date=2026-11-20   # slik siden skal være på en slippdag
+#   tools/build.sh <kilde.html> --released          # alt 2027-innhold er sluppet
+# Uten --date eller --released holdes alt 2027-innhold utenfor.
 # Kildefila inneholder upubliserte data og skal ALDRI legges i repoet.
 set -euo pipefail
 SRC="$(realpath "$1")"; shift

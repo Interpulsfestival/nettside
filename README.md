@@ -28,5 +28,9 @@ Bygget stopper hvis upubliserte 2027-data havner i utdataene. Se over med
 Ikke rediger HTML-filene for hånd; de overskrives ved neste bygg.
 
 - **Alt-tekster**: håndskrevne bildebeskrivelser legges i `tools/alt-overrides.json` (norsk, engelsk).
-- **Programslipp 2027**: `tools/build.sh ../kilde.html --released`. Da lages `/program/2027`, én side per konsert
-  (`/program/2027/<konsert>`), `/medvirkende/2027`, og `/program` og `/medvirkende` sender til 2027.
+- **Trinnvis programslipp 2027**: hver konsert, medvirkende og partner i kildefila har en slippdato (`rel`).
+  `tools/build.sh ../kilde.html --date=2026-11-20` bygger siden slik den skal være den dagen: det som er sluppet,
+  får egen konsertside (`/program/2027/<konsert>`) og står på `/medvirkende/2027`; resten vises som «Avsløres …»
+  og er ikke med i filene i det hele tatt. `--released` slipper alt.
+- **Forhåndsvisning**: legg til `--preview="tekst"` for relative lenker og et banner, slik at bygget kan vises privat
+  (for eksempel som Claude-artefakt). Et forhåndsvisningsbygg skal aldri committes.

@@ -21,7 +21,7 @@
   var lb = d.getElementById("lb"), LB = {list:[], i:0};
   function lbShow(){
     var it = LB.list[LB.i];
-    d.getElementById("lbImg").src = "/img/" + it.im + ".jpg";
+    d.getElementById("lbImg").src = (root.getAttribute("data-base") || "/") + "img/" + it.im + ".jpg";
     d.getElementById("lbCap").textContent = (en ? "Photo: " : "Foto: ") + it.cap + "  ·  " + (LB.i+1) + " / " + LB.list.length;
   }
   function lbOpen(list, i){ LB = {list:list, i:Math.max(0,i)}; lbShow(); lb.hidden = false; d.body.style.overflow = "hidden"; lb.querySelector(".lb-x").focus(); }

@@ -1,12 +1,17 @@
 // Bygger interpuls.no som flersidig statisk nettsted fra prototypen (artefaktet).
-// Bruk: node build.mjs <proto.html> <utmappe> [--released] [--public=<offentlig index.html for lekkasjesjekk>]
+// Bruk: node build.mjs <proto.html> <utmappe> [--date=ÅÅÅÅ-MM-DD | --released] [--public=<offentlig index.html>] [--img=<img-mappe>] [--preview=<etikett>]
+//   --date: bygg slik siden skal se ut på denne datoen. 2027-innhold med rel (slippdato) etter datoen holdes helt utenfor.
+//   --released: alt 2027-innhold er sluppet.  --preview: relative lenker og banner, for privat forhåndsvisning.
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
 import crypto from "node:crypto";
 
 const [,, SRC, OUT, ...flags] = process.argv;
-const RELEASED = flags.includes("--released");
+const DATE = flags.includes("--released") ? "9999-12-31" : ((flags.find(f=>f.startsWith("--date="))||"").slice(7) || "0000-00-00");
+if(!/^\d{4}-\d{2}-\d{2}$/.test(DATE)) throw new Error("--date må være ÅÅÅÅ-MM-DD");
+const PREVIEW = (flags.find(f=>f.startsWith("--preview="))||"").slice(10);
+const isOut = rel => rel && rel > DATE;   // ikke sluppet ennå
 const PUBLIC = (flags.find(f=>f.startsWith("--public="))||"").slice(9);
 const TOOLS = path.dirname(new URL(import.meta.url).pathname);
 const BASE = "https://interpuls.no";
@@ -23,14 +28,46 @@ code = code.replace("const IMG = n => 'img/' + n + '.jpg';", "const IMG = n => '
 code += `
 ;globalThis.__api = {
   setLang: l => { lang = l; }, setReleased: v => { RELEASED_2027 = v; }, state,
-  T, PROGRAM, PEOPLE, IPE, PRESS, ALBUMS, VIDEOS, RADIO, TIMELINE, PARTNERS, SUPPORT,
+  T, PROGRAM, PEOPLE, IPE, PRESS, ALBUMS, VIDEOS, RADIO, TIMELINE, PARTNERS, SUPPORT, COMPOSERS_2027: (typeof COMPOSERS_2027!=="undefined" ? COMPOSERS_2027 : []),
   credit, slug, L, esc, t, IMG, whoLinks, descHtml, newsBand, vids,
   home, program, people, media, about, partners, contact, pressPage, artistsCarousel, daysBrief
 };`;
 const ctx = vm.createContext({console, Date, URL});
 vm.runInContext(code, ctx);
 const A = ctx.__api;
+
+// ---------- 1b. Trinnvis slipp av 2027 ----------
+// Det som ikke er sluppet på DATE samles først (til lekkasjesjekken) og fjernes så fra dataene.
+const SECRET = [];
+const P27 = A.PROGRAM[2027];
+const WD = {no:["søndag","mandag","tirsdag","onsdag","torsdag","fredag","lørdag"], en:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]};
+const MO = {no:["januar","februar","mars","april","mai","juni","juli","august","september","oktober","november","desember"], en:["January","February","March","April","May","June","July","August","September","October","November","December"]};
+const relText = (rel, lang) => { const d = new Date(rel+"T12:00:00Z"); return lang==="no" ? `${WD.no[d.getUTCDay()]} ${d.getUTCDate()}. ${MO.no[d.getUTCMonth()]}` : `${WD.en[d.getUTCDay()]} ${d.getUTCDate()} ${MO.en[d.getUTCMonth()]}`; };
+const PENDING = new Set();   // slippdatoer som gjenstår
+if(P27){
+  for(const day of P27.days){
+    day.events = day.events.map(e => {
+      if(!isOut(e.rel)) return e;
+      SECRET.push(e); PENDING.add(e.rel);
+      return {stub:true, rel:e.rel, t:e.t, img:"ms-05485", who:"Kulturkirken Jakob",
+        h:{no:`Avsløres ${relText(e.rel,"no")}`, en:`Revealed ${relText(e.rel,"en")}`},
+        desc:{no:"Meld deg på nyhetsbrevet, så får du beskjed når konserten slippes.", en:"Sign up for the newsletter to hear first when this concert is announced."}};
+    });
+    if(day.events.every(e=>e.stub)){ SECRET.push(day.theme); delete day.theme; }
+  }
+  delete P27.prelim;
+}
+if(A.PEOPLE[2027]){ SECRET.push(A.PEOPLE[2027].filter(p=>isOut(p.rel))); A.PEOPLE[2027] = A.PEOPLE[2027].filter(p=>!isOut(p.rel)); }
+for(const arr of [A.PARTNERS, A.COMPOSERS_2027, A.TIMELINE]){
+  const outF = x => Array.isArray(x) ? (x[0]==="2027" ? isOut(x[4] ?? "9999-12-31") : typeof x[1]==="string" && isOut(x[1])) : isOut(x.rel);
+  for(let i=arr.length-1;i>=0;i--) if(outF(arr[i])){ SECRET.push(arr[i]); arr.splice(i,1); }
+}
+SECRET.push(A.T.no.days, A.T.en.days);
+const RELEASED = !!P27 && P27.days.some(d=>d.events.some(e=>!e.stub));
+if(P27 && !RELEASED){ for(const d of P27.days) SECRET.push(d.theme); }
+const PARTIAL = RELEASED && PENDING.size > 0;
 A.setReleased(RELEASED);
+const real = e => !e.stub;
 
 // ---------- 2. CSS og fonter ----------
 const cssStart = src.indexOf("<style>\n@font-face");
@@ -40,7 +77,7 @@ const fonts = [];
 css = css.replace(/url\(data:font\/woff2;base64,([A-Za-z0-9+/=]+)\) format\("woff2"\);font-weight:([0-9 ]+);/g, (m, b64, w) => {
   const name = `museo-sans-${w.trim().replace(/ /g,"-")}.woff2`;
   fonts.push([name, Buffer.from(b64, "base64")]);
-  return `url(/fonts/${name}) format("woff2");font-weight:${w};`;
+  return `url(../fonts/${name}) format("woff2");font-weight:${w};`;
 });
 css += `
 /* --- flersidig versjon --- */
@@ -77,23 +114,23 @@ const PPL_YEARS = Object.keys(A.PEOPLE).filter(k=>RELEASED || k!=="2027").sort((
 const CUR_PPL = PPL_YEARS[0];
 const U = (lang, p) => lang==="en" ? (p==="/" ? "/en/" : "/en" + p) : p;
 const abs = p => BASE + p;
-const progPath = y => (!y || y==="tba" || y==="null") ? "/program" : `/program/${y}`;
+const progPath = y => (!y || y==="tba" || y==="null") ? (RELEASED ? "/program/2027" : "/program") : `/program/${y}`;
 const esc = A.esc;
 const attr = s => String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
 const clip = (s, n=158) => { s = s.replace(/\s+/g," ").trim(); if(s.length<=n) return s; const c = s.slice(0,n); return c.slice(0, c.lastIndexOf(" ")).replace(/[,.;:·–-]+$/,"") + "…"; };
 const stripTags = s => s.replace(/<[^>]+>/g,"");
 const isoDate = ddmmyy => { const [d,m,y] = ddmmyy.split("."); return `20${y}-${m}-${d}`; };
 const evId = (y, day, e) => `ev-${y}-${day.date.replace(/\./g,"")}-${e.t.replace(":","")}`;
-const concertSlug = e => A.slug(e.h.no);
+const concertSlug = e => e.slug || A.slug(e.h.no);
 const hasConcertPages = y => RELEASED && String(y)==="2027";
 
 // ---------- Bilder: alt-tekst og responsive varianter ----------
 const IMG_DIR = flags.find(f=>f.startsWith("--img="))?.slice(6);
-const MANIFEST = IMG_DIR && fs.existsSync(path.join(IMG_DIR, "r/manifest.json")) ? JSON.parse(fs.readFileSync(path.join(IMG_DIR, "r/manifest.json"), "utf8")) : {};
+const MANIFEST = !PREVIEW && IMG_DIR && fs.existsSync(path.join(IMG_DIR, "r/manifest.json")) ? JSON.parse(fs.readFileSync(path.join(IMG_DIR, "r/manifest.json"), "utf8")) : {};
 const ALT = {};   // bildenavn -> {no, en}; første kilde vinner
 const setAlt = (im, no, en) => { if(im && !ALT[im]) ALT[im] = {no, en}; };
 for(const y of YEARS){ const P = A.PROGRAM[y]; if(!P.days) continue;
-  for(const d of P.days) for(const e of d.events){
+  for(const d of P.days) for(const e of d.events.filter(real)){
     const tre = /Trekanten/.test(e.h.no);
     setAlt(e.img, `${e.h.no} – Interpuls ${y}, ${tre?"Trekanten":"Kulturkirken Jakob"}`, `${e.h.en} – Interpuls ${y}, ${tre?"Trekanten":"Kulturkirken Jakob"}, Oslo`);
   } }
@@ -163,7 +200,7 @@ function rewrite(html, lang){
 
 // ---------- 4. Sideskall ----------
 const NAV = ["program","medvirkende","bilder","presse","om","partnere","kontakt"];
-const navHref = (lang, k) => U(lang, k==="program" ? "/program" : k==="medvirkende" ? `/medvirkende/${CUR_PPL}` : "/"+k);
+const navHref = (lang, k) => U(lang, k==="program" ? progPath() : k==="medvirkende" ? `/medvirkende/${CUR_PPL}` : "/"+k);
 
 function header(lang, cur, alt){
   const T = A.T[lang];
@@ -290,11 +327,31 @@ function musicEvent(y, day, e, lang, url){
 // ---------- 6. Sider ----------
 const pages = [];   // {file, self, lang}
 const sitemap = [];
+// Forhåndsvisning: gjør /absolutte/ stier relative, slik at sidene kan vises fra en vilkårlig mappe.
+// Bildene ligger én mappe opp (delt mellom slippene).
+function relify(html, depth){
+  const up = "../".repeat(depth);
+  const fix = p => {
+    const [pathPart, rest=""] = p.split(/(?=[?#])/);
+    if(pathPart.startsWith("/img/") || pathPart==="/favicon.png" || pathPart==="/apple-touch-icon.png") return up + "../" + pathPart.slice(1) + rest;
+    if(/\.[a-z0-9]+$/i.test(pathPart)) return up + pathPart.slice(1) + rest;
+    const d = pathPart.replace(/^\/|\/$/g,"");
+    return up + (d ? d + "/" : "") + "index.html" + rest;
+  };
+  return html.replace(/(href|src)="(\/[^"/][^"]*|\/)"/g, (m, a, p) => `${a}="${fix(p)}"`)
+             .replace('<html lang=', `<html data-base="${up}../" lang=`);
+}
+const BANNER = lab => `<div style="position:sticky;top:0;z-index:30;background:#FAB161;color:#181818;font:700 13px/1.3 system-ui,sans-serif;padding:8px max(16px,env(safe-area-inset-left,0px));display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between"><span>FORHÅNDSVISNING · ${lab} · ikke publisert</span><a href="${"__UP__"}../index.html" style="color:inherit">Alle slipp</a></div>`;
 function emit(lang, self, html){
   const rel = U(lang, self).replace(/^\//,"");
   const file = path.join(OUT, rel, "index.html");
   fs.mkdirSync(path.dirname(file), {recursive:true});
-  fs.writeFileSync(file, images(html, lang));
+  html = images(html, lang);
+  if(PREVIEW){
+    const depth = rel.split("/").filter(Boolean).length;
+    html = relify(html.replace("<body>\n", "<body>\n" + BANNER(PREVIEW)), depth).replace("__UP__", "../".repeat(depth));
+  }
+  fs.writeFileSync(file, html);
   pages.push({lang, self, file});
 }
 function render(fn, lang){ A.setLang(lang); return rewrite(fn(), lang); }
@@ -306,7 +363,7 @@ for(const lang of ["no","en"]){
   // Forside
   {
     const festLd = {"@type":"Festival","name":"Interpuls 2027","startDate":"2027-02-25","endDate":"2027-02-27","eventStatus":"https://schema.org/EventScheduled","eventAttendanceMode":"https://schema.org/OfflineEventAttendanceMode","location":JAKOB,"image":BASE+"/img/og.jpg","description":NO?"Festival for minimalistisk musikk i Kulturkirken Jakob, Oslo.":"Festival of minimalist music at Kulturkirken Jakob, Oslo.","organizer":{"@id":BASE+"/#org"},"url":abs(U(lang,"/"))};
-    if(RELEASED) festLd.subEvent = A.PROGRAM[2027].days.flatMap(d=>d.events.map(e=>({"@type":"MusicEvent","name":NO?e.h.no:e.h.en,"startDate":`${isoDate(d.date)}T${e.t}:00+01:00`,"url":abs(U(lang,`/program/2027/${concertSlug(e)}`))})));
+    if(RELEASED) festLd.subEvent = A.PROGRAM[2027].days.flatMap(d=>d.events.filter(real).map(e=>({"@type":"MusicEvent","name":NO?e.h.no:e.h.en,"startDate":`${isoDate(d.date)}T${e.t}:00+01:00`,"url":abs(U(lang,`/program/2027/${concertSlug(e)}`))})));
     const web = {"@type":"WebSite","name":"Interpuls","url":abs(U(lang,"/")),"inLanguage":NO?"nb":"en","publisher":{"@id":BASE+"/#org"}};
     emit(lang, "/", page({lang, key:"hjem", self:"/",
       title: NO ? "Interpuls – festival for minimalistisk musikk i Oslo" : "Interpuls – festival of minimalist music in Oslo",
@@ -331,10 +388,17 @@ for(const lang of ["no","en"]){
     const P = A.PROGRAM[y];
     let body = render(A.program, lang), ld = [], img = "og.jpg", desc;
     if(P.days){
-      const evs = P.days.flatMap(d=>d.events.map(e=>[d,e]));
+      const evs = P.days.flatMap(d=>d.events.filter(real).map(e=>[d,e]));
       img = evs[0][1].img + ".jpg";
+      if(PARTIAL && String(y)==="2027"){
+        const dates = [...PENDING].sort().map(r=>relText(r,lang).replace(/^\S+ /,""));
+        const list = dates.length>1 ? dates.slice(0,-1).join(", ")+(NO?" og ":" and ")+dates.at(-1) : dates[0];
+        body = body.replace('<div class="dayblock">', `<p class="notice">${NO?`Programmet avsløres litt etter litt. Resten kommer ${list}.`:`The programme is being revealed step by step. The rest follows on ${list}.`} <a href="http://eepurl.com/hXy6Rn" target="_blank" rel="noopener">${NO?"Få beskjed på nyhetsbrevet":"Get the newsletter"} →</a></p><div class="dayblock">`);
+      }
       desc = clip(NO ? `Program for Interpuls ${y} i Kulturkirken Jakob, Oslo: ${evs.map(([,e])=>e.h.no).join(", ")}.`
                      : `Programme for Interpuls ${y} at Kulturkirken Jakob, Oslo: ${evs.map(([,e])=>e.h.en).join(", ")}.`);
+      for(const d of P.days) for(const e of d.events.filter(x=>x.stub))
+        body = body.replace(new RegExp(`(<article class="event" id="${evId(y,d,e)}">[\\s\\S]*?<div class="acts">)\\s*<span class="tag">[^<]*</span>`), "$1");
       ld = evs.map(([d,e]) => musicEvent(y, d, e, lang, hasConcertPages(y) ? abs(U(lang,`/program/${y}/${concertSlug(e)}`)) : abs(U(lang,`/program/${y}`)) + "#" + evId(y,d,e)));
       if(hasConcertPages(y)){
         for(const [d,e] of evs){
@@ -351,7 +415,7 @@ for(const lang of ["no","en"]){
 
     // Én side per konsert (bare for programmet som er sluppet)
     if(hasConcertPages(y)){
-      const evs = P.days.flatMap(d=>d.events.map(e=>[d,e]));
+      const evs = P.days.flatMap(d=>d.events.filter(real).map(e=>[d,e]));
       for(const [d,e] of evs){
         const s = concertSlug(e), self = `/program/${y}/${s}`;
         const full = [A.L(e.desc), e.more ? A.L(e.more) : ""].filter(Boolean);
@@ -390,7 +454,9 @@ for(const lang of ["no","en"]){
     emit(lang, `/medvirkende/${y}`, page({lang, key:"medvirkende", self:`/medvirkende/${y}`,
       title: `${T.pplH} ${y} – Interpuls`,
       desc: clip(NO ? `Medvirkende på Interpuls ${y}: ${names.join(", ")}.` : `Artists at Interpuls ${y}: ${names.join(", ")}.`),
-      body: render(A.people, lang)}));
+      body: (()=>{ let b = render(A.people, lang);
+        if(PARTIAL && y==="2027") b = b.replace('<div class="people">', `<p class="notice">${NO?"Flere medvirkende avsløres når resten av programmet slippes.":"More artists are announced as the rest of the programme is released."}</p><div class="people">`);
+        return b; })()}));
   }
 
   const simple = [
@@ -482,19 +548,17 @@ if(imgDir){
   for(const [f, s] of allOut) if(f.endsWith(".html") && /href="#(hjem|program|medvirkende|bilder|presse|om|partnere|kontakt)"/.test(s)) console.warn("HASH-LENKE IGJEN:", f);
 }
 
-// lekkasjesjekk: ingen upubliserte 2027-data i bygget før slipp
-if(!RELEASED){
-  const pub = PUBLIC ? fs.readFileSync(PUBLIC, "utf8") : "";
+// lekkasjesjekk: ingen 2027-data som ikke er sluppet på DATE
+{
+  const pub = (PUBLIC ? fs.readFileSync(PUBLIC, "utf8") : "") + JSON.stringify([A.PROGRAM[2027]||null, A.PEOPLE[2027]||null, A.PARTNERS, A.COMPOSERS_2027, A.TIMELINE]);
   const secret = new Set();
-  const collect = v => { if(typeof v==="string"){ secret.add(v); v.split(/ · | & |, | og | and /).forEach(x=>secret.add(x)); } else if(v && typeof v==="object") Object.values(v).forEach(collect); };
-  collect(A.PROGRAM[2027]); collect(A.PEOPLE[2027]); collect(A.TIMELINE.filter(r=>r[0]==="2027"));
-  collect(A.PARTNERS.filter(p=>!p.tba)); collect(A.T.no.days); collect(A.T.en.days);
-  const comp = src.match(/<p class="composers">[^\n]*?<\/b>([^<]+)<\/p>/); if(comp) collect(comp[1]);
+  const collect = v => { if(typeof v==="string"){ secret.add(v); v.split(/ · | & |, | og | and |: /).forEach(x=>secret.add(x)); } else if(v && typeof v==="object") Object.values(v).forEach(collect); };
+  collect(SECRET);
   const ok = JSON.stringify(OVR);
-  const check = [...secret].map(s=>s.trim()).filter(s => s.length >= 6 && !/^\d/.test(s) && !pub.includes(s) && !pub.includes(esc(s)) && !ok.includes(s));
+  const check = [...secret].map(s=>s.trim()).filter(s => s.length >= 6 && !/^\d/.test(s) && !/^\d{4}-\d{2}-\d{2}$/.test(s) && !pub.includes(s) && !pub.includes(esc(s)) && !ok.includes(s));
   const leaks = [];
   for(const [f, s] of allOut) for(const x of check) if(s.includes(x) || s.includes(esc(x))) leaks.push(`${path.relative(OUT,f)}: «${x.slice(0,60)}»`);
-  if(leaks.length){ console.error("LEKKASJE AV 2027-DATA:\n  " + leaks.slice(0,40).join("\n  ")); process.exit(2); }
-  console.log(`Lekkasjesjekk OK (${check.length} hemmelige strenger kontrollert mot ${allOut.length} filer)`);
+  if(leaks.length){ console.error("LEKKASJE AV IKKE-SLUPPET 2027-INNHOLD:\n  " + leaks.slice(0,40).join("\n  ")); process.exit(2); }
+  console.log(`Lekkasjesjekk OK for ${DATE} (${check.length} hemmelige strenger kontrollert mot ${allOut.length} filer)`);
 }
-console.log(`Bygget ${pages.length} sider (${RELEASED?"MED":"uten"} 2027-program) til ${OUT}`);
+console.log(`Bygget ${pages.length} sider for ${DATE} (2027: ${!RELEASED?"ikke sluppet":PARTIAL?"delvis sluppet, gjenstår "+[...PENDING].sort().join(", "):"helt sluppet"}) til ${OUT}`);
