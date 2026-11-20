@@ -56,6 +56,7 @@ if(P27){
     if(day.events.every(e=>e.stub)){ SECRET.push(day.theme); delete day.theme; }
   }
   delete P27.prelim;
+  if(P27.pass && (isOut(P27.pass.rel) || DATE > P27.pass.earlyUntil)){ SECRET.push(P27.pass); delete P27.pass; }
 }
 if(A.PEOPLE[2027]){ SECRET.push(A.PEOPLE[2027].filter(p=>isOut(p.rel))); A.PEOPLE[2027] = A.PEOPLE[2027].filter(p=>!isOut(p.rel)); }
 for(const arr of [A.PARTNERS, A.COMPOSERS_2027, A.TIMELINE]){
@@ -100,6 +101,10 @@ img{height:auto}
 .concert .desc{color:var(--mist);max-width:62ch}.concert .desc+.desc{margin-top:14px}
 .concert .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
 @media (max-width:860px){.concert{grid-template-columns:1fr;gap:28px}}
+.concert .facts{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:6px;max-width:62ch;font-size:.95rem}
+.concert .facts li{border-left:3px solid var(--orange);padding-left:12px;color:var(--mist)}
+.passbox{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between;background:var(--ink-2);border-left:3px solid var(--orange);padding:18px 20px;margin-bottom:36px}
+.passbox > div{max-width:64ch;min-width:0}.passbox b{font-size:1.1rem}.passbox p{color:var(--mist);margin-top:6px;font-size:.95rem}
 .others{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;margin-top:18px}
 .others a{background:var(--ink-2);padding:18px;display:grid;gap:4px;text-decoration:none;min-width:0}
 .others a:hover{background:var(--ink-3)}.others span{color:var(--accent);font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
@@ -390,6 +395,10 @@ for(const lang of ["no","en"]){
     if(P.days){
       const evs = P.days.flatMap(d=>d.events.filter(real).map(e=>[d,e]));
       img = evs[0][1].img + ".jpg";
+      if(String(y)==="2027" && P.pass){
+        const pb = P.pass.url ? `<a class="btn" href="${P.pass.url}" target="_blank" rel="noopener">${NO?"Kjøp earlybird-pass":"Buy early-bird pass"}</a>` : `<span class="tag">${T.soon}</span>`;
+        body = body.replace('<div class="dayblock">', `<div class="passbox"><div><b>${NO?"Earlybird-festivalpass":"Early-bird festival pass"}</b><p>${esc(P.pass[lang])}</p></div>${pb}</div><div class="dayblock">`);
+      }
       if(PARTIAL && String(y)==="2027"){
         const dates = [...PENDING].sort().map(r=>relText(r,lang).replace(/^\S+ /,""));
         const list = dates.length>1 ? dates.slice(0,-1).join(", ")+(NO?" og ":" and ")+dates.at(-1) : dates[0];
@@ -425,19 +434,20 @@ for(const lang of ["no","en"]){
   <section style="padding-top:24px"><div class="wrap">
     ${P.prelim?`<p class="notice">${T.prelim}</p>`:""}
     <div class="concert">
-      <div class="cimg"><img src="/img/${e.img}.jpg" alt=""></div>
+      <div class="cimg"><img src="/img/${e.img}.jpg" alt=""${e.pos?` style="object-position:${e.pos}"`:""}></div>
       <div>
         <div class="time">${A.L(d.d)} ${esc(d.date)} · ${e.t}${d.theme?` · ${A.L(d.theme)}`:""}</div>
         <div class="who">${A.whoLinks(e.who, y)}</div>
         ${full.map(p=>`<p class="desc">${esc(p)}</p>`).join("")}
         ${e.pulses?`<ul class="pulses">${e.pulses.map(p=>`<li><span class="t">${p[0]}</span><span class="p">${p[1]}</span><span>${esc(A.L(p[2]))}</span></li>`).join("")}</ul>`:""}
+        ${e.info?`<ul class="facts">${A.L(e.info).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
         <div class="acts">${acts}</div>
         <p style="margin-top:20px;color:var(--dim)">Kulturkirken Jakob, Hausmanns gate 14, Oslo</p>
       </div>
     </div>
     <a class="morelink" href="#program" data-year="${y}" data-key="progYear" data-route="program">← ${NO?`Hele programmet ${y}`:`Full programme ${y}`}</a>
-    <h2 class="subhead" style="margin-bottom:0">${NO?"Flere konserter":"More concerts"}</h2>
-    <div class="others">${others}</div>
+    ${others?`<h2 class="subhead" style="margin-bottom:0">${NO?"Flere konserter":"More concerts"}</h2>
+    <div class="others">${others}</div>`:""}
   </div></section>${A.newsBand()}`, lang);
         emit(lang, self, page({lang, key:"program", self,
           title: `${A.L(e.h)} – Interpuls ${y}`,
