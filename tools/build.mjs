@@ -102,6 +102,9 @@ img{height:auto}
 .passbox > div{max-width:64ch;min-width:0}.passbox b{font-size:1.1rem}.passbox p{color:var(--mist);margin-top:6px;font-size:.95rem}
 .tbaday{color:var(--accent);font-weight:700;font-size:1.25rem;padding-top:4px}
 .day li.tbaday{display:block;font-size:1rem}
+/* Ticketmaster-bilder (2048 × 1152) vises i 16:9 så tekst og navn ikke beskjæres */
+.event .img:has(img[src*="/tm-"]),.concert .cimg:has(img[src*="/tm-"]){aspect-ratio:16/9}
+.event .img:has(img[src*="/tm-"]){align-self:start}
 .others{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;margin-top:18px}
 .others a{background:var(--ink-2);padding:18px;display:grid;gap:4px;text-decoration:none;min-width:0}
 .others a:hover{background:var(--ink-3)}.others span{color:var(--accent);font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
@@ -134,6 +137,7 @@ const setAlt = (im, no, en) => { if(im && !ALT[im]) ALT[im] = {no, en}; };
 for(const y of YEARS){ const P = A.PROGRAM[y]; if(!P.days) continue;
   for(const d of P.days) for(const e of d.events.filter(real)){
     const tre = /Trekanten/.test(e.h.no);
+    if(e.imgalt) setAlt(e.img, e.imgalt.no, e.imgalt.en);
     setAlt(e.img, `${e.h.no} – Interpuls ${y}, ${tre?"Trekanten":"Kulturkirken Jakob"}`, `${e.h.en} – Interpuls ${y}, ${tre?"Trekanten":"Kulturkirken Jakob"}, Oslo`);
   } }
 for(const v of [...A.VIDEOS, ...A.RADIO]) setAlt(v.img, `${v.h.no.replace(/ \(utdrag\)$/,"")} – ${v.p.no.split(" · ")[0]}`, `${v.h.en.replace(/ \(excerpt\)$/,"")} – ${v.p.en.split(" · ")[0]}`);
