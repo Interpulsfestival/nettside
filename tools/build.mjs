@@ -46,14 +46,9 @@ const relText = (rel, lang) => { const d = new Date(rel+"T12:00:00Z"); return la
 const PENDING = new Set();   // slippdatoer som gjenstår
 if(P27){
   for(const day of P27.days){
-    day.events = day.events.map(e => {
-      if(!isOut(e.rel)) return e;
-      SECRET.push(e); PENDING.add(e.rel);
-      return {stub:true, rel:e.rel, t:e.t, img:"ms-05485", who:"Kulturkirken Jakob",
-        h:{no:`Avsløres ${relText(e.rel,"no")}`, en:`Revealed ${relText(e.rel,"en")}`},
-        desc:{no:"Meld deg på nyhetsbrevet, så får du beskjed når konserten slippes.", en:"Sign up for the newsletter to hear first when this concert is announced."}};
-    });
-    if(day.events.every(e=>e.stub)){ SECRET.push(day.theme); delete day.theme; }
+    for(const e of day.events) if(isOut(e.rel)){ SECRET.push(e); PENDING.add(e.rel); }
+    day.events = day.events.filter(e => !isOut(e.rel));
+    if(!day.events.length && day.theme){ SECRET.push(day.theme); delete day.theme; }
   }
   delete P27.prelim;
   if(P27.pass && (isOut(P27.pass.rel) || DATE > P27.pass.earlyUntil)){ SECRET.push(P27.pass); delete P27.pass; }
@@ -64,7 +59,7 @@ for(const arr of [A.PARTNERS, A.COMPOSERS_2027, A.TIMELINE]){
   for(let i=arr.length-1;i>=0;i--) if(outF(arr[i])){ SECRET.push(arr[i]); arr.splice(i,1); }
 }
 SECRET.push(A.T.no.days, A.T.en.days);
-const RELEASED = !!P27 && P27.days.some(d=>d.events.some(e=>!e.stub));
+const RELEASED = !!P27 && P27.days.some(d=>d.events.length);
 if(P27 && !RELEASED){ for(const d of P27.days) SECRET.push(d.theme); }
 const PARTIAL = RELEASED && PENDING.size > 0;
 A.setReleased(RELEASED);
@@ -105,6 +100,8 @@ img{height:auto}
 .concert .facts li{border-left:3px solid var(--orange);padding-left:12px;color:var(--mist)}
 .passbox{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between;background:var(--ink-2);border-left:3px solid var(--orange);padding:18px 20px;margin-bottom:36px}
 .passbox > div{max-width:64ch;min-width:0}.passbox b{font-size:1.1rem}.passbox p{color:var(--mist);margin-top:6px;font-size:.95rem}
+.tbaday{color:var(--accent);font-weight:700;font-size:1.25rem;padding-top:4px}
+.day li.tbaday{display:block;font-size:1rem}
 .others{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;margin-top:18px}
 .others a{background:var(--ink-2);padding:18px;display:grid;gap:4px;text-decoration:none;min-width:0}
 .others a:hover{background:var(--ink-3)}.others span{color:var(--accent);font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
@@ -399,11 +396,8 @@ for(const lang of ["no","en"]){
         const pb = P.pass.url ? `<a class="btn" href="${P.pass.url}" target="_blank" rel="noopener">${NO?"Kjøp earlybird-pass":"Buy early-bird pass"}</a>` : `<span class="tag">${T.soon}</span>`;
         body = body.replace('<div class="dayblock">', `<div class="passbox"><div><b>${NO?"Earlybird-festivalpass":"Early-bird festival pass"}</b><p>${esc(P.pass[lang])}</p></div>${pb}</div><div class="dayblock">`);
       }
-      if(PARTIAL && String(y)==="2027"){
-        const dates = [...PENDING].sort().map(r=>relText(r,lang).replace(/^\S+ /,""));
-        const list = dates.length>1 ? dates.slice(0,-1).join(", ")+(NO?" og ":" and ")+dates.at(-1) : dates[0];
-        body = body.replace('<div class="dayblock">', `<p class="notice">${NO?`Programmet avsløres litt etter litt. Resten kommer ${list}.`:`The programme is being revealed step by step. The rest follows on ${list}.`} <a href="http://eepurl.com/hXy6Rn" target="_blank" rel="noopener">${NO?"Få beskjed på nyhetsbrevet":"Get the newsletter"} →</a></p><div class="dayblock">`);
-      }
+      if(PARTIAL && String(y)==="2027")
+        body = body.replace('<div class="dayblock">', `<p class="notice">${NO?"Mer av programmet kommer snart.":"More of the programme is coming soon."} <a href="http://eepurl.com/hXy6Rn" target="_blank" rel="noopener">${NO?"Få beskjed på nyhetsbrevet":"Get the newsletter"} →</a></p><div class="dayblock">`);
       desc = clip(NO ? `Program for Interpuls ${y} i Kulturkirken Jakob, Oslo: ${evs.map(([,e])=>e.h.no).join(", ")}.`
                      : `Programme for Interpuls ${y} at Kulturkirken Jakob, Oslo: ${evs.map(([,e])=>e.h.en).join(", ")}.`);
       for(const d of P.days) for(const e of d.events.filter(x=>x.stub))
