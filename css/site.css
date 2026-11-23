@@ -1,5 +1,5 @@
-@font-face{font-family:"Museo Sans";src:url(/fonts/museo-sans-300-500.woff2) format("woff2");font-weight:300 500;font-display:swap}
-@font-face{font-family:"Museo Sans";src:url(/fonts/museo-sans-600-900.woff2) format("woff2");font-weight:600 900;font-display:swap}
+@font-face{font-family:"Museo Sans";src:url(../fonts/museo-sans-300-500.woff2) format("woff2");font-weight:300 500;font-display:swap}
+@font-face{font-family:"Museo Sans";src:url(../fonts/museo-sans-600-900.woff2) format("woff2");font-weight:600 900;font-display:swap}
 /* Layout: dark festival ground, orange as the single signal colour, rhythm-of-dots motif from the logo, program shown as a timeline of "pulses" */
 :root{
   --ink:#181818; --ink-2:#202020; --ink-3:#2b2b2b;
@@ -434,6 +434,19 @@ img{height:auto}
 .concert .desc{color:var(--mist);max-width:62ch}.concert .desc+.desc{margin-top:14px}
 .concert .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
 @media (max-width:860px){.concert{grid-template-columns:1fr;gap:28px}}
+.concert .facts{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:6px;max-width:62ch;font-size:.95rem}
+.concert .facts li{border-left:3px solid var(--orange);padding-left:12px;color:var(--mist)}
+.passbox{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between;background:var(--ink-2);border-left:3px solid var(--orange);padding:18px 20px;margin-bottom:36px}
+.passbox > div{max-width:64ch;min-width:0}.passbox b{font-size:1.1rem}.passbox p{color:var(--mist);margin-top:6px;font-size:.95rem}
+.tbaday{color:var(--accent);font-weight:700;font-size:1.25rem;padding-top:4px}
+.day li.tbaday{display:block;font-size:1rem}
+/* Ticketmaster-bilder (2048 × 1152) vises i 16:9 så tekst og navn ikke beskjæres */
+.event .img:has(img[src*="/tm-"]),.concert .cimg:has(img[src*="/tm-"]){aspect-ratio:16/9}
+.event .img:has(img[src*="/tm-"]){align-self:start}
+.newsline{border-left:3px solid var(--orange);background:var(--ink-2);padding:.75em 1em;color:var(--mist);font-size:.95rem;max-width:80ch;margin:0}
+.newsline b{color:var(--accent);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;margin-right:10px}
+.newsline a{color:var(--paper);font-weight:700}
+.person p.foto{font-size:.78rem;color:var(--dim-2)}
 .others{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;margin-top:18px}
 .others a{background:var(--ink-2);padding:18px;display:grid;gap:4px;text-decoration:none;min-width:0}
 .others a:hover{background:var(--ink-3)}.others span{color:var(--accent);font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}

@@ -14,5 +14,7 @@ node "$REPO/tools/build.mjs" "$SRC" "$OUT" --public="$PUB" --img="$REPO/img" "$@
 python3 "$REPO/tools/images.py" "$REPO/img" "$OUT"
 rm -rf "$OUT"; OUT="$(mktemp -d)"
 node "$REPO/tools/build.mjs" "$SRC" "$OUT" --public="$PUB" --img="$REPO/img" "$@"
+# fjern forrige bygg, så sider som ikke lenger skal finnes (f.eks. /program før slipp) ikke blir liggende
+( cd "$REPO" && rm -rf index.html 404.html sitemap.xml css js fonts en program medvirkende bilder presse om partnere kontakt )
 cp -r "$OUT"/. "$REPO"/
 echo "Ferdig. Se over med: node tools/serve.mjs . img 8080   (git status viser endringene)"

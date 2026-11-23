@@ -16,19 +16,19 @@
 [[redirects]]
   from = "/program/*"
   to = "/program"
-  status = 301
+  status = 302
 [[redirects]]
   from = "/medvirkende/*"
   to = "/medvirkende"
-  status = 301
+  status = 302
 [[redirects]]
   from = "/en/program/*"
   to = "/en/program"
-  status = 301
+  status = 302
 [[redirects]]
   from = "/en/medvirkende/*"
   to = "/en/medvirkende"
-  status = 301
+  status = 302
 [[redirects]]
   from = "/aktuelt/*"
   to = "/bilder"

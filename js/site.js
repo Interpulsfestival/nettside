@@ -10,6 +10,17 @@
   }
   function gcEvent(name, title){ gcSend({path: name, title: title || name, event: true}); }
 
+  // --- notiser som har gått ut på dato skjules
+  d.querySelectorAll("[data-until]").forEach(function(el){
+    var u = el.getAttribute("data-until");
+    if(u && Date.now() > Date.parse(u + "T23:59:59+01:00")) el.hidden = true;
+  });
+  d.querySelectorAll("[data-after]").forEach(function(el){
+    if(Date.now() < Date.parse(el.getAttribute("data-after"))) return;
+    var b = el.querySelector(".nl-before"), a = el.querySelector(".nl-after");
+    if(b && a){ b.hidden = true; a.hidden = false; }
+  });
+
   // --- egen mobilversjon av video (f.eks. YouTube Shorts)
   try{
     if(matchMedia("(max-width:760px)").matches){
@@ -21,7 +32,7 @@
   var lb = d.getElementById("lb"), LB = {list:[], i:0};
   function lbShow(){
     var it = LB.list[LB.i];
-    d.getElementById("lbImg").src = "/img/" + it.im + ".jpg";
+    d.getElementById("lbImg").src = (root.getAttribute("data-base") || "/") + "img/" + it.im + ".jpg";
     d.getElementById("lbCap").textContent = (en ? "Photo: " : "Foto: ") + it.cap + "  ·  " + (LB.i+1) + " / " + LB.list.length;
   }
   function lbOpen(list, i){ LB = {list:list, i:Math.max(0,i)}; lbShow(); lb.hidden = false; d.body.style.overflow = "hidden"; lb.querySelector(".lb-x").focus(); }

@@ -28,7 +28,7 @@ code = code.replace("const IMG = n => 'img/' + n + '.jpg';", "const IMG = n => '
 code += `
 ;globalThis.__api = {
   setLang: l => { lang = l; }, setReleased: v => { RELEASED_2027 = v; }, state,
-  T, PROGRAM, PEOPLE, IPE, PRESS, ALBUMS, VIDEOS, RADIO, TIMELINE, PARTNERS, SUPPORT, COMPOSERS_2027: (typeof COMPOSERS_2027!=="undefined" ? COMPOSERS_2027 : []),
+  T, PROGRAM, PEOPLE, IPE, PRESS, ALBUMS, VIDEOS, RADIO, TIMELINE, PARTNERS, SUPPORT, COMPOSERS_2027: (typeof COMPOSERS_2027!=="undefined" ? COMPOSERS_2027 : []), NEWS: (typeof NEWS!=="undefined" ? NEWS : []),
   credit, slug, L, esc, t, IMG, whoLinks, descHtml, newsBand, vids,
   home, program, people, media, about, partners, contact, pressPage, artistsCarousel, daysBrief
 };`;
@@ -62,6 +62,16 @@ SECRET.push(A.T.no.days, A.T.en.days);
 const RELEASED = !!P27 && P27.days.some(d=>d.events.length);
 if(P27 && !RELEASED){ for(const d of P27.days) SECRET.push(d.theme); }
 const PARTIAL = RELEASED && PENDING.size > 0;
+const TICKETS = P27 ? (P27.tickets || (P27.pass && P27.pass.url) || "") : "";
+// notiser som fortsatt er aktuelle på DATE (skjules også i nettleseren etter datoen)
+const NEWS_NOW = A.NEWS.filter(n => !n.until || n.until >= DATE);
+const newsHtml = lang => NEWS_NOW.map(n => {
+  const tag = `<b>${lang==="no"?"Aktuelt":"News"}</b>`;
+  const before = `${esc(n[lang])}${n.url?` <a href="${n.url}" target="_blank" rel="noopener">${esc(n["link_"+lang]||(lang==="no"?"Les mer":"Read more"))} →</a>`:""}`;
+  // etter «after» byttes teksten i nettleseren (f.eks. etter en konsert)
+  const after = n.after && n["after_"+lang] ? `<span class="nl-after" hidden>${esc(n["after_"+lang])}${n["after_url_"+lang]?` <a href="${n["after_url_"+lang]}">${esc(n["after_link_"+lang]||"")} →</a>`:""}</span>` : "";
+  return `<p class="newsline" data-until="${n.until||""}"${n.after?` data-after="${n.after}"`:""}>${tag}<span class="nl-before">${before}</span>${after}</p>`;
+}).join("");
 A.setReleased(RELEASED);
 const real = e => !e.stub;
 
@@ -105,6 +115,10 @@ img{height:auto}
 /* Ticketmaster-bilder (2048 × 1152) vises i 16:9 så tekst og navn ikke beskjæres */
 .event .img:has(img[src*="/tm-"]),.concert .cimg:has(img[src*="/tm-"]){aspect-ratio:16/9}
 .event .img:has(img[src*="/tm-"]){align-self:start}
+.newsline{border-left:3px solid var(--orange);background:var(--ink-2);padding:.75em 1em;color:var(--mist);font-size:.95rem;max-width:80ch;margin:0}
+.newsline b{color:var(--accent);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;margin-right:10px}
+.newsline a{color:var(--paper);font-weight:700}
+.person p.foto{font-size:.78rem;color:var(--dim-2)}
 .others{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;margin-top:18px}
 .others a{background:var(--ink-2);padding:18px;display:grid;gap:4px;text-decoration:none;min-width:0}
 .others a:hover{background:var(--ink-3)}.others span{color:var(--accent);font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
@@ -197,8 +211,8 @@ function rewrite(html, lang){
     attrs = attrs.replace(/\s(href|data-year|data-key|data-route|data-person|data-pyear|data-goto)="[^"]*"/g, "");
     return `<a href="${U(lang,p)}"${attrs}>`;
   });
-  // billettknapper uten egen lenke går til festivalpasset når det er i salg
-  if(A.PROGRAM[2027] && A.PROGRAM[2027].pass && A.PROGRAM[2027].pass.url) html = html.split('href="https://www.ticketmaster.no/"').join(`href="${A.PROGRAM[2027].pass.url}"`);
+  // generelle billettknapper går til Interpuls-siden hos Ticketmaster
+  if(TICKETS) html = html.split('href="https://www.ticketmaster.no/"').join(`href="${TICKETS}"`);
   // fotokreditering til lysbildet
   html = html.replace(/data-lb="([^"]+)"/g, (m, im) => `${m} data-cap="${attr(A.credit(im))}"`);
   // mobilversjon av video
@@ -213,7 +227,7 @@ const navHref = (lang, k) => U(lang, k==="program" ? progPath() : k==="medvirken
 function header(lang, cur, alt){
   const T = A.T[lang];
   const nav = T.nav.map(([k,v]) => `<a href="${navHref(lang,k)}"${k===cur?' aria-current="page"':""}>${v}</a>`).join("");
-  const top = RELEASED ? `<a class="btn" id="topBtn" href="${(A.PROGRAM[2027]&&A.PROGRAM[2027].pass&&A.PROGRAM[2027].pass.url)||"https://www.ticketmaster.no/"}" target="_blank" rel="noopener">${T.tickets}</a>`
+  const top = RELEASED ? `<a class="btn" id="topBtn" href="${TICKETS||"https://www.ticketmaster.no/"}" target="_blank" rel="noopener">${T.tickets}</a>`
                        : `<a class="btn" id="topBtn" href="http://eepurl.com/hXy6Rn" target="_blank" rel="noopener">${T.newsletter}</a>`;
   const langLink = (l, label) => `<a href="${l===lang ? U(lang, alt.self) : U(l, alt.self)}" hreflang="${l==="no"?"nb":"en"}" lang="${l==="no"?"nb":"en"}" data-lang="${l}"${l===lang?' class="on" aria-current="true"':""}>${label}</a>`;
   return `<header class="top">
@@ -377,7 +391,8 @@ for(const lang of ["no","en"]){
       title: NO ? "Interpuls – festival for minimalistisk musikk i Oslo" : "Interpuls – festival of minimalist music in Oslo",
       desc: NO ? "Interpuls er Norges festival for minimalistisk og ny musikk, i Kulturkirken Jakob i Oslo. Korte konsertpulser, visuals, popcorn og bar. 25.–27. februar 2027."
                : "Interpuls is Norway's festival of minimalist and new music, at Kulturkirken Jakob in Oslo. Short concert sets, visuals, popcorn and a bar. 25–27 February 2027.",
-      body: render(A.home, lang), ld:[ORG, web, festLd], extraHead: HASH_REDIRECT}));
+      body: (()=>{ let b = render(A.home, lang); const n = newsHtml(lang); if(n) b = b.replace('<section data-dn="intro">', `<div class="wrap" style="padding-top:28px">${n}</div><section data-dn="intro">`); return b; })(),
+      ld:[ORG, web, festLd], extraHead: HASH_REDIRECT}));
   }
 
   // Program-forside (før slipp)
@@ -477,7 +492,9 @@ for(const lang of ["no","en"]){
     ["kontakt", A.contact, NO?"Kontakt – Interpuls":"Contact – Interpuls", T.kP],
   ];
   for(const [k, fn, title, desc] of simple){
-    emit(lang, "/"+k, page({lang, key:k, self:"/"+k, title, desc: clip(desc), body: render(fn, lang)}));
+    let b = render(fn, lang);
+    if(k==="om" && newsHtml(lang)) b = b.replace(/(<div class="ipe-text">[\s\S]*?<\/div>)/, `$1<div style="margin-top:24px">${newsHtml(lang)}</div>`);
+    emit(lang, "/"+k, page({lang, key:k, self:"/"+k, title, desc: clip(desc), body: b}));
   }
 }
 
@@ -522,7 +539,7 @@ ${selves.flatMap(s => ["no","en"].map(l => `<url><loc>${abs(U(l,s))}</loc><lastm
 # Gjeldende år (endres ved programslipp)
 ${r("/medvirkende", cur, 302)}${r("/en/medvirkende", "/en"+cur, 302)}${RELEASED ? r("/program", "/program/2027", 302) + r("/en/program", "/en/program/2027", 302) : ""}
 # Gamle adresser fra forrige nettside (gjelder bare stier som ikke finnes som filer)
-${r("/program/*", "/program")}${r("/medvirkende/*", "/medvirkende")}${r("/en/program/*", "/en/program")}${r("/en/medvirkende/*", "/en/medvirkende")}${r("/aktuelt/*", "/bilder")}${r("/aktuelt", "/bilder")}${r("/index.html", "/")}${r("/tools/*", "/404.html", "404!")}${r("/README.md", "/404.html", "404!")}
+${r("/program/*", "/program", 302)}${r("/medvirkende/*", "/medvirkende", 302)}${r("/en/program/*", "/en/program", 302)}${r("/en/medvirkende/*", "/en/medvirkende", 302)}${r("/aktuelt/*", "/bilder")}${r("/aktuelt", "/bilder")}${r("/index.html", "/")}${r("/tools/*", "/404.html", "404!")}${r("/README.md", "/404.html", "404!")}
 [[headers]]
   for = "/img/*"
   [headers.values]
@@ -560,7 +577,7 @@ if(imgDir){
 
 // lekkasjesjekk: ingen 2027-data som ikke er sluppet på DATE
 {
-  const pub = (PUBLIC ? fs.readFileSync(PUBLIC, "utf8") : "") + JSON.stringify([A.PROGRAM[2027]||null, A.PEOPLE[2027]||null, A.PARTNERS, A.COMPOSERS_2027, A.TIMELINE]);
+  const pub = (PUBLIC ? fs.readFileSync(PUBLIC, "utf8") : "") + JSON.stringify([A.PROGRAM[2027]||null, A.PEOPLE[2027]||null, A.PARTNERS, A.COMPOSERS_2027, A.TIMELINE, NEWS_NOW]);
   const secret = new Set();
   const collect = v => { if(typeof v==="string"){ secret.add(v); v.split(/ · | & |, | og | and |: /).forEach(x=>secret.add(x)); } else if(v && typeof v==="object") Object.values(v).forEach(collect); };
   collect(SECRET);
