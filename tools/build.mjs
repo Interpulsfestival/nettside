@@ -65,7 +65,13 @@ const PARTIAL = RELEASED && PENDING.size > 0;
 const TICKETS = P27 ? (P27.tickets || (P27.pass && P27.pass.url) || "") : "";
 // notiser som fortsatt er aktuelle på DATE (skjules også i nettleseren etter datoen)
 const NEWS_NOW = A.NEWS.filter(n => !n.until || n.until >= DATE);
-const newsHtml = lang => NEWS_NOW.map(n => `<p class="newsline" data-until="${n.until||""}"><b>${lang==="no"?"Aktuelt":"News"}</b>${esc(n[lang])}${n.url?` <a href="${n.url}" target="_blank" rel="noopener">${esc(n["link_"+lang]||(lang==="no"?"Les mer":"Read more"))} →</a>`:""}</p>`).join("");
+const newsHtml = lang => NEWS_NOW.map(n => {
+  const tag = `<b>${lang==="no"?"Aktuelt":"News"}</b>`;
+  const before = `${esc(n[lang])}${n.url?` <a href="${n.url}" target="_blank" rel="noopener">${esc(n["link_"+lang]||(lang==="no"?"Les mer":"Read more"))} →</a>`:""}`;
+  // etter «after» byttes teksten i nettleseren (f.eks. etter en konsert)
+  const after = n.after && n["after_"+lang] ? `<span class="nl-after" hidden>${esc(n["after_"+lang])}${n["after_url_"+lang]?` <a href="${n["after_url_"+lang]}">${esc(n["after_link_"+lang]||"")} →</a>`:""}</span>` : "";
+  return `<p class="newsline" data-until="${n.until||""}"${n.after?` data-after="${n.after}"`:""}>${tag}<span class="nl-before">${before}</span>${after}</p>`;
+}).join("");
 A.setReleased(RELEASED);
 const real = e => !e.stub;
 
@@ -112,6 +118,7 @@ img{height:auto}
 .newsline{border-left:3px solid var(--orange);background:var(--ink-2);padding:.75em 1em;color:var(--mist);font-size:.95rem;max-width:80ch;margin:0}
 .newsline b{color:var(--accent);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;margin-right:10px}
 .newsline a{color:var(--paper);font-weight:700}
+.person p.foto{font-size:.78rem;color:var(--dim-2)}
 .others{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px;margin-top:18px}
 .others a{background:var(--ink-2);padding:18px;display:grid;gap:4px;text-decoration:none;min-width:0}
 .others a:hover{background:var(--ink-3)}.others span{color:var(--accent);font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}

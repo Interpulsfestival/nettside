@@ -15,6 +15,11 @@
     var u = el.getAttribute("data-until");
     if(u && Date.now() > Date.parse(u + "T23:59:59+01:00")) el.hidden = true;
   });
+  d.querySelectorAll("[data-after]").forEach(function(el){
+    if(Date.now() < Date.parse(el.getAttribute("data-after"))) return;
+    var b = el.querySelector(".nl-before"), a = el.querySelector(".nl-after");
+    if(b && a){ b.hidden = true; a.hidden = false; }
+  });
 
   // --- egen mobilversjon av video (f.eks. YouTube Shorts)
   try{
