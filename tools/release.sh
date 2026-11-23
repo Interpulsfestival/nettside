@@ -6,9 +6,10 @@ set -euo pipefail
 SRC="$(realpath "$1")"; DATE="$2"; EXTRA="${3:-}"
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO"
-if [ -n "$EXTRA" ]; then cp "$EXTRA"/*.jpg img/ 2>/dev/null || true; fi
+EXTRA_FILES=()
+if [ -n "$EXTRA" ]; then for f in "$EXTRA"/*.jpg; do [ -e "$f" ] || continue; [ -e "img/$(basename "$f")" ] || { cp "$f" img/; EXTRA_FILES+=("$(basename "$f" .jpg)"); }; done; fi
 tools/build.sh "$SRC" --date="$DATE"
 # fjern ekstra bilder som ikke brukes på de sluppede sidene (slik at ingenting røpes før tiden)
-for f in img/tm-*.jpg; do [ -e "$f" ] || continue; n=$(basename "$f" .jpg); grep -rqs "/img/$n.jpg" --include=*.html . || { rm -f "$f" img/r/"$n"-*; }; done
+for n in "${EXTRA_FILES[@]}"; do grep -rqs "/img/$n.jpg" --include=*.html . || rm -f "img/$n.jpg" img/r/"$n"-*; done
 git add -A
 git commit -q -m "Programslipp $DATE" && git log --oneline -1

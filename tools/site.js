@@ -10,6 +10,12 @@
   }
   function gcEvent(name, title){ gcSend({path: name, title: title || name, event: true}); }
 
+  // --- notiser som har gått ut på dato skjules
+  d.querySelectorAll("[data-until]").forEach(function(el){
+    var u = el.getAttribute("data-until");
+    if(u && Date.now() > Date.parse(u + "T23:59:59+01:00")) el.hidden = true;
+  });
+
   // --- egen mobilversjon av video (f.eks. YouTube Shorts)
   try{
     if(matchMedia("(max-width:760px)").matches){
