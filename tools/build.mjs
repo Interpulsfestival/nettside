@@ -539,7 +539,7 @@ ${selves.flatMap(s => ["no","en"].map(l => `<url><loc>${abs(U(l,s))}</loc><lastm
 # Gjeldende år (endres ved programslipp)
 ${r("/medvirkende", cur, 302)}${r("/en/medvirkende", "/en"+cur, 302)}${RELEASED ? r("/program", "/program/2027", 302) + r("/en/program", "/en/program/2027", 302) : ""}
 # Gamle adresser fra forrige nettside (gjelder bare stier som ikke finnes som filer)
-${r("/program/*", "/program")}${r("/medvirkende/*", "/medvirkende")}${r("/en/program/*", "/en/program")}${r("/en/medvirkende/*", "/en/medvirkende")}${r("/aktuelt/*", "/bilder")}${r("/aktuelt", "/bilder")}${r("/index.html", "/")}${r("/tools/*", "/404.html", "404!")}${r("/README.md", "/404.html", "404!")}
+${r("/program/*", "/program", 302)}${r("/medvirkende/*", "/medvirkende", 302)}${r("/en/program/*", "/en/program", 302)}${r("/en/medvirkende/*", "/en/medvirkende", 302)}${r("/aktuelt/*", "/bilder")}${r("/aktuelt", "/bilder")}${r("/index.html", "/")}${r("/tools/*", "/404.html", "404!")}${r("/README.md", "/404.html", "404!")}
 [[headers]]
   for = "/img/*"
   [headers.values]
