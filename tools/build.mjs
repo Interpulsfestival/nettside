@@ -197,6 +197,8 @@ function rewrite(html, lang){
     attrs = attrs.replace(/\s(href|data-year|data-key|data-route|data-person|data-pyear|data-goto)="[^"]*"/g, "");
     return `<a href="${U(lang,p)}"${attrs}>`;
   });
+  // billettknapper uten egen lenke går til festivalpasset når det er i salg
+  if(A.PROGRAM[2027] && A.PROGRAM[2027].pass && A.PROGRAM[2027].pass.url) html = html.split('href="https://www.ticketmaster.no/"').join(`href="${A.PROGRAM[2027].pass.url}"`);
   // fotokreditering til lysbildet
   html = html.replace(/data-lb="([^"]+)"/g, (m, im) => `${m} data-cap="${attr(A.credit(im))}"`);
   // mobilversjon av video
@@ -211,7 +213,7 @@ const navHref = (lang, k) => U(lang, k==="program" ? progPath() : k==="medvirken
 function header(lang, cur, alt){
   const T = A.T[lang];
   const nav = T.nav.map(([k,v]) => `<a href="${navHref(lang,k)}"${k===cur?' aria-current="page"':""}>${v}</a>`).join("");
-  const top = RELEASED ? `<a class="btn" id="topBtn" href="https://www.ticketmaster.no/" target="_blank" rel="noopener">${T.tickets}</a>`
+  const top = RELEASED ? `<a class="btn" id="topBtn" href="${(A.PROGRAM[2027]&&A.PROGRAM[2027].pass&&A.PROGRAM[2027].pass.url)||"https://www.ticketmaster.no/"}" target="_blank" rel="noopener">${T.tickets}</a>`
                        : `<a class="btn" id="topBtn" href="http://eepurl.com/hXy6Rn" target="_blank" rel="noopener">${T.newsletter}</a>`;
   const langLink = (l, label) => `<a href="${l===lang ? U(lang, alt.self) : U(l, alt.self)}" hreflang="${l==="no"?"nb":"en"}" lang="${l==="no"?"nb":"en"}" data-lang="${l}"${l===lang?' class="on" aria-current="true"':""}>${label}</a>`;
   return `<header class="top">
