@@ -5,11 +5,19 @@
 # Gjeldende år (endres ved programslipp)
 [[redirects]]
   from = "/medvirkende"
-  to = "/medvirkende/2026"
+  to = "/medvirkende/2027"
   status = 302
 [[redirects]]
   from = "/en/medvirkende"
-  to = "/en/medvirkende/2026"
+  to = "/en/medvirkende/2027"
+  status = 302
+[[redirects]]
+  from = "/program"
+  to = "/program/2027"
+  status = 302
+[[redirects]]
+  from = "/en/program"
+  to = "/en/program/2027"
   status = 302
 
 # Gamle adresser fra forrige nettside (gjelder bare stier som ikke finnes som filer)
