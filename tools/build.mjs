@@ -391,7 +391,7 @@ for(const lang of ["no","en"]){
       title: NO ? "Interpuls – festival for minimalistisk musikk i Oslo" : "Interpuls – festival of minimalist music in Oslo",
       desc: NO ? "Interpuls er Norges festival for minimalistisk og ny musikk, i Kulturkirken Jakob i Oslo. Korte konsertpulser, visuals, popcorn og bar. 25.–27. februar 2027."
                : "Interpuls is Norway's festival of minimalist and new music, at Kulturkirken Jakob in Oslo. Short concert sets, visuals, popcorn and a bar. 25–27 February 2027.",
-      body: (()=>{ let b = render(A.home, lang); const n = newsHtml(lang); if(n) b = b.replace('<section data-dn="intro">', `<div class="wrap" style="padding-top:28px">${n}</div><section data-dn="intro">`); return b; })(),
+      body: (()=>{ let b = render(A.home, lang); const n = newsHtml(lang); if(n) b = b.includes('<section class="hl">') ? b.replace('<section class="hl">', `<div class="wrap" style="padding-top:40px">${n}</div><section class="hl">`) : b.replace('<section data-dn="intro">', `<div class="wrap" style="padding-top:28px">${n}</div><section data-dn="intro">`); return b; })(),
       ld:[ORG, web, festLd], extraHead: HASH_REDIRECT}));
   }
 
